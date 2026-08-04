@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biel AAC — Painel de Configuração</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.0/umd/supabase.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red: #CC0000;
+      --red-dark: #990000;
+      --black: #1A1A1A;
+      --dark: #2A2A2A;
+      --panel: #333333;
+      --card-bg: #3A3A3A;
+      --border: rgba(255,255,255,0.1);
+      --text: #FFFFFF;
+      --text-muted: rgba(255,255,255,0.5);
+      --text-dim: rgba(255,255,255,0.25);
+      --green: #2E7D32;
+      --blue: #0277BD;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    body { background: var(--black); color: var(--text); font-family: var(--font); min-height: 100vh; }
+
+    /* ─── LOGIN ─────────────────────────────────────────────── */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-box {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .login-logo img { height: 44px; }
+    .login-logo span { font-size: 20px; font-weight: 700; color: var(--text-muted); }
+    .login-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+    .form-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; display: block; }
+    .form-input {
+      width: 100%;
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--red); }
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: var(--red); color: white; width: 100%; justify-content: center; }
+    .btn-success { background: var(--green); color: white; }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-danger { background: #8B0000; color: white; }
+    .btn-icon { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 8px; border-radius: 6px; width: 32px; height: 32px; justify-content: center; }
+    .btn-icon:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+    .error-msg { background: #8B0000; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────── */
+    .app-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 260px;
+      background: var(--dark);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-header img { height: 32px; }
+    .sidebar-header-text { font-size: 13px; font-weight: 700; }
+    .sidebar-header-sub { font-size: 11px; color: var(--text-muted); }
+    .sidebar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); padding: 16px 20px 6px; }
+    .section-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+      font-size: 13px;
+    }
+    .section-item:hover { background: rgba(255,255,255,0.05); }
+    .section-item.active { background: rgba(204,0,0,0.12); border-left-color: var(--red); color: white; }
+    .section-item .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .section-item .count {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.08);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+    }
+    .user-email { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ─── MAIN ─────────────────────────────────────────────── */
+    .main { flex: 1; overflow-y: auto; }
+    .main-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      background: var(--black);
+      z-index: 10;
+    }
+    .main-title { font-size: 20px; font-weight: 700; }
+    .main-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+    .main-content { padding: 32px; }
+
+    /* ─── CARDS GRID ─────────────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .card-tile {
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card-tile:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .card-tile-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+    .card-tile-icon {
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+    .card-tile-footer {
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      color: white;
+      line-height: 1.3;
+    }
+    .card-tile-actions {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .card-tile:hover .card-tile-actions { opacity: 1; }
+    .card-action-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      transition: transform 0.1s;
+    }
+    .card-action-btn:hover { transform: scale(1.1); }
+    .card-action-edit { background: rgba(0,0,0,0.7); color: white; }
+    .card-action-delete { background: rgba(204,0,0,0.85); color: white; }
+
+    /* ─── ADD CARD ─────────────────────────────────────────── */
+    .card-add {
+      border-radius: 10px;
+      border: 2px dashed rgba(255,255,255,0.15);
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .card-add:hover { border-color: var(--red); color: var(--red); background: rgba(204,0,0,0.05); }
+    .card-add-icon { font-size: 24px; }
+
+    /* ─── MODAL ─────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+    .modal {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title { font-size: 17px; font-weight: 700; color: var(--red); display: flex; align-items: center; gap: 8px; }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 0 24px 24px; display: flex; justify-content: flex-end; gap: 8px; }
+    .close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; padding: 4px; }
+    .close-btn:hover { color: var(--text); }
+
+    /* ─── FORM ──────────────────────────────────────────────── */
+    .form-row { margin-bottom: 20px; }
+    .color-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .color-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.15s;
+    }
+    .color-dot:hover { transform: scale(1.1); }
+    .color-dot.selected { border-color: white; box-shadow: 0 0 0 2px rgba(255,255,255,0.3); }
+
+    /* ─── IMAGE UPLOAD ──────────────────────────────────────── */
+    .img-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .img-upload-area:hover { border-color: var(--red); background: rgba(204,0,0,0.04); }
+    .img-upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .img-preview {
+      width: 80px; height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin: 0 auto 8px;
+      display: block;
+    }
+    .img-upload-text { font-size: 13px; color: var(--text-muted); }
+    .img-upload-text strong { color: var(--red); }
+
+    /* ─── SECTION HEADER ────────────────────────────────────── */
+    .section-config {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .section-color-badge {
+      width: 48px; height: 48px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .section-info { flex: 1; }
+    .section-name { font-size: 17px; font-weight: 700; }
+    .section-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ─── EMPTY STATE ───────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .empty-state-sub { font-size: 14px; margin-bottom: 24px; }
+
+    /* ─── LOADING ───────────────────────────────────────────── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── TOAST ─────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--green);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 200;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    .toast.error { background: var(--red); }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* ─── TABS ──────────────────────────────────────────────── */
+    .tabs { display: flex; gap: 4px; background: var(--black); padding: 4px; border-radius: 8px; margin-bottom: 16px; }
+    .tab { padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-muted); background: transparent; transition: all 0.15s; }
+    .tab.active { background: var(--red); color: white; }
+
+    /* ─── ICON PICKER ───────────────────────────────────────── */
+    .icon-search { width: 100%; background: var(--black); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 13px; margin-bottom: 10px; outline: none; }
+    .icon-search:focus { border-color: var(--red); }
+    .icon-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-height: 200px; overflow-y: auto; }
+    .icon-btn { aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--border); background: var(--black); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.15s; }
+    .icon-btn:hover { border-color: var(--red); background: rgba(204,0,0,0.08); }
+    .icon-btn.selected { background: var(--red); border-color: var(--red); }
+
+    /* ─── CHECKBOX ──────────────────────────────────────────── */
+    .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: var(--text-muted); }
+    .checkbox-row input { accent-color: var(--red); width: 16px; height: 16px; cursor: pointer; }
+
+    /* ─── VOCALIZAÇÃO HINT ──────────────────────────────────── */
+    .voc-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+    /* ─── SECTION MODAL ADD ─────────────────────────────────── */
+    .add-section-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+    .add-section-row:hover { background: rgba(204,0,0,0.06); }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ─── SUPABASE CONFIG ─────────────────────────────────────────
+const SUPABASE_URL = 'https://bhlibvcmmarljcbbpzbc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobGlidmNtbWFybGpjYmJwemJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTA3MDQsImV4cCI6MjA5ODE4NjcwNH0.TJY1jR1QBzhb1_dbZafoZxEfkltSjIq4jchXFZqChYw';
+const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const BUCKET = 'card-images';
+
+// ─── CORES ───────────────────────────────────────────────────
+const COLORS = [
+  { label: 'Azul',         value: 4284119706, hex: '#5A7A9A' },
+  { label: 'Verde',        value: 4281236786, hex: '#2E7D32' },
+  { label: 'Vermelho',     value: 4291176488, hex: '#C62828' },
+  { label: 'Laranja',      value: 4293284096, hex: '#E65100' },
+  { label: 'Roxo',         value: 4285143962, hex: '#6A1B9A' },
+  { label: 'Rosa',         value: 4289533015, hex: '#AD1457' },
+  { label: 'Azul claro',   value: 4278351805, hex: '#0277BD' },
+  { label: 'Marrom',       value: 4283315246, hex: '#4E342E' },
+  { label: 'Cinza escuro', value: 4281812815, hex: '#37474F' },
+  { label: 'Verde-azulado',value: 4278217052, hex: '#00695C' },
+  { label: 'Índigo',       value: 4280825235, hex: '#283593' },
+  { label: 'Verde oliva',  value: 4283796271, hex: '#558B2F' },
+];
+
+const DEFAULT_COLOR = COLORS[0];
+
+function colorHex(value) {
+  const c = COLORS.find(c => c.value === value);
+  return c ? c.hex : '#5A7A9A';
+}
+
+// ─── ÍCONES ──────────────────────────────────────────────────
+const ICONS = [
+  { name: 'wc', emoji: '🚻' }, { name: 'restaurant', emoji: '🍽️' },
+  { name: 'local_drink', emoji: '🥤' }, { name: 'bedtime', emoji: '🌙' },
+  { name: 'favorite', emoji: '❤️' }, { name: 'mood', emoji: '😊' },
+  { name: 'sentiment_very_dissatisfied', emoji: '😢' }, { name: 'help', emoji: '❓' },
+  { name: 'person', emoji: '👤' }, { name: 'group', emoji: '👥' },
+  { name: 'school', emoji: '🏫' }, { name: 'home', emoji: '🏠' },
+  { name: 'pets', emoji: '🐾' }, { name: 'sports_soccer', emoji: '⚽' },
+  { name: 'music_note', emoji: '🎵' }, { name: 'tv', emoji: '📺' },
+  { name: 'phone', emoji: '📱' }, { name: 'cake', emoji: '🎂' },
+  { name: 'directions_car', emoji: '🚗' }, { name: 'flight', emoji: '✈️' },
+  { name: 'local_hospital', emoji: '🏥' }, { name: 'medication', emoji: '💊' },
+  { name: 'book', emoji: '📚' }, { name: 'brush', emoji: '🖌️' },
+  { name: 'games', emoji: '🎮' }, { name: 'toys', emoji: '🧸' },
+  { name: 'emoji_emotions', emoji: '😀' }, { name: 'waving_hand', emoji: '👋' },
+  { name: 'thumb_up', emoji: '👍' }, { name: 'thumb_down', emoji: '👎' },
+  { name: 'check', emoji: '✅' }, { name: 'close', emoji: '❌' },
+  { name: 'shopping_cart', emoji: '🛒' }, { name: 'checkroom', emoji: '👔' },
+  { name: 'beach_access', emoji: '🏖️' }, { name: 'pool', emoji: '🏊' },
+  { name: 'fitness_center', emoji: '💪' }, { name: 'accessibility', emoji: '♿' },
+  { name: 'local_pharmacy', emoji: '💊' }, { name: 'church', emoji: '⛪' },
+  { name: 'park', emoji: '🌳' }, { name: 'directions_walk', emoji: '🚶' },
+  { name: 'directions_run', emoji: '🏃' }, { name: 'directions_bike', emoji: '🚲' },
+  { name: 'star', emoji: '⭐' }, { name: 'warning', emoji: '⚠️' },
+  { name: 'photo_camera', emoji: '📷' }, { name: 'headphones', emoji: '🎧' },
+];
+
+// ─── UTILS ───────────────────────────────────────────────────
+function iconEmoji(name) {
+  const i = ICONS.find(i => i.name === name);
+  return i ? i.emoji : '📋';
+}
+
+function Toast({ msg, type, onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 2800);
+    return () => clearTimeout(t);
+  }, []);
+  return <div className={`toast ${type === 'error' ? 'error' : ''}`}>{msg}</div>;
+}
+
+// ─── COLOR PICKER ────────────────────────────────────────────
+function ColorPicker({ value, onChange }) {
+  return (
+    <div className="color-grid">
+      {COLORS.map(c => (
+        <div key={c.value} className={`color-dot ${value === c.value ? 'selected' : ''}`}
+          style={{ background: c.hex }} title={c.label}
+          onClick={() => onChange(c.value)} />
+      ))}
+    </div>
+  );
+}
+
+// ─── ICON PICKER ─────────────────────────────────────────────
+function IconPicker({ value, onChange }) {
+  const [q, setQ] = useState('');
+  const filtered = q ? ICONS.filter(i => i.name.includes(q.toLowerCase()) || i.emoji.includes(q)) : ICONS;
+  return (
+    <div>
+      <input className="icon-search" placeholder="Buscar ícone..." value={q} onChange={e => setQ(e.target.value)} />
+      <div className="icon-grid">
+        {filtered.map(i => (
+          <button key={i.name} className={`icon-btn ${value === i.name ? 'selected' : ''}`}
+            title={i.name} onClick={() => onChange(i.name)}>{i.emoji}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── IMAGE UPLOAD ─────────────────────────────────────────────
+function ImageUpload({ value, onChange, userId }) {
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef();
+
+  async function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fileName = `${userId}/${Date.now()}.jpg`;
+      const { error } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+        contentType: file.type, upsert: true
+      });
+      if (error) throw error;
+      const { data } = supabase.storage.from(BUCKET).getPublicUrl(fileName);
+      onChange(data.publicUrl);
+    } catch(e) { alert('Erro ao fazer upload: ' + e.message); }
+    finally { setUploading(false); }
+  }
+
+  return (
+    <div className="img-upload-area" onClick={() => inputRef.current.click()}>
+      <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{display:'none'}} />
+      {value ? (
+        <>
+          <img src={value} className="img-preview" alt="preview" />
+          <div className="img-upload-text">Clique para trocar a imagem</div>
+        </>
+      ) : (
+        <>
+          <div style={{fontSize:32,marginBottom:8}}>{uploading ? '⏳' : '📷'}</div>
+          <div className="img-upload-text">
+            {uploading ? 'Enviando...' : <><strong>Clique</strong> para adicionar uma foto</>}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── CARD MODAL ───────────────────────────────────────────────
+function CardModal({ card, sectionColor, userId, onSave, onClose }) {
+  const [name, setName] = useState(card?.name || '');
+  const [voc, setVoc] = useState(card?.vocalization || '');
+  const [speakImm, setSpeakImm] = useState(card?.speak_immediately || false);
+  const [color, setColor] = useState(card?.background_color || sectionColor || DEFAULT_COLOR.value);
+  const [tab, setTab] = useState('icon');
+  const [icon, setIcon] = useState(card?.icon_name || 'grid_view');
+  const [imgUrl, setImgUrl] = useState(card?.image_path || '');
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!name.trim()) return;
+    setSaving(true);
+    await onSave({ name: name.trim().toUpperCase(), vocalization: voc.trim() || null, speak_immediately: speakImm, background_color: color, icon_name: tab === 'icon' ? icon : null, image_path: tab === 'image' ? imgUrl || null : null });
+    setSaving(false);
+  }
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <div className="modal-title">✏️ {card ? 'Editar card' : 'Novo card'}</div>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {/* Preview */}
+          <div style={{display:'flex',justifyContent:'center',marginBottom:20}}>
+            <div style={{width:110,height:90,borderRadius:10,background:colorHex(color),display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:6,padding:8,border:'1px solid rgba(255,255,255,0.15)'}}>
+              {tab === 'image' && imgUrl ? <img src={imgUrl} style={{width:40,height:40,borderRadius:6,objectFit:'cover'}} alt="" /> : <div style={{fontSize:28}}>{iconEmoji(icon)}</div>}
+              <div style={{fontSize:10,fontWeight:700,color:'white',textAlign:'center',lineHeight:1.2}}>{name || 'NOME DO CARD'}</div>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Nome do card</label>
+            <input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: ÁGUA" autoFocus />
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Vocalização <span style={{fontWeight:400,opacity:.6}}>(deixe em branco para usar o nome)</span></label>
+            <input className="form-input" value={voc} onChange={e => setVoc(e.target.value)} placeholder="Ex: EU QUERO ÁGUA" />
+          </div>
+
+          <div className="form-row">
+            <label className="checkbox-row">
+              <input type="checkbox" checked={speakImm} onChange={e => setSpeakImm(e.target.checked)} />
+              Vocalizar imediatamente ao tocar no card
+            </label>
+          </div>
+
+          <div className="form-row">
+            <label className="form-label">Cor do card</label>
+            <ColorPicker value={color} onChange={setColor} />
+          </div>
+
+          <div className="form-row">
+            <div className="tabs">
+              <button className={`tab ${tab === 'icon' ? 'active' : ''}`} onClick={() => setTab('icon')}>Ícone</button>
+              <button className={`tab ${tab === 'image' ? 'active' : ''}`} onClick={() => setTab('image')}>Foto</button>
+            </div>
+            {tab === 'icon' ? (
+              <IconPicker value={icon} onChange={setIcon} />
+            ) : (
+              <ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} />
+            )}
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-success" onClick={save} disabled={!name.trim() || saving}>
+            {saving ? <span className="spinner" /> : '✓'} Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SECTION MODAL ────────────────────────────────────────────
+function SectionModal({ section, onSave, onClose }) {
+  const [name, setName] = useState(section?.name || '');
+  const [color, setColor] = useState(section?.background_color || DEFAULT_COLOR.value);
+  const [icon, setIcon] = useState(section?.icon_name || 'grid_view');
+  const [speakOn, setSpeakOn] = useState(section?.speak_on_select || false);
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!name.trim()) return;
+    setSaving(true);
+    await onSave({ name: name.trim().toUpperCase(), background_color: color, icon_name: icon, speak_on_select: speakOn });
+    setSaving(false);
+  }
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <div className="modal-title">📂 {section ? 'Editar seção' : 'Nova seção'}</div>
+          <button className="close-btn" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-row">
+            <label className="form-label">Nome da seção</label>
+            <input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: COMIDA E BEBIDA" autoFocus />
+          </div>
+          <div className="form-row">
+            <label className="checkbox-row">
+              <input type="checkbox" checked={speakOn} onChange={e => setSpeakOn(e.target.checked)} />
+              Vocalizar o nome da seção ao selecionar
+            </label>
+          </div>
+          <div className="form-row">
+            <label className="form-label">Cor da seção</label>
+            <ColorPicker value={color} onChange={setColor} />
+          </div>
+          <div className="form-row">
+            <label className="form-label">Ícone</label>
+            <IconPicker value={icon} onChange={setIcon} />
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-success" onClick={save} disabled={!name.trim() || saving}>
+            {saving ? <span className="spinner" /> : '✓'} Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── DELETE CONFIRM ───────────────────────────────────────────
+function DeleteConfirm({ title, msg, onConfirm, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal" style={{maxWidth:380}}>
+        <div className="modal-header"><div className="modal-title">🗑️ {title}</div><button className="close-btn" onClick={onClose}>×</button></div>
+        <div className="modal-body"><p style={{fontSize:14,color:'var(--text-muted)',lineHeight:1.6}}>{msg}</p></div>
+        <div className="modal-footer">
+          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-danger" onClick={onConfirm}>Excluir</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────
+function App() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
+
+  const [sections, setSections] = useState([]);
+  const [cards, setCards] = useState([]);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [dataLoading, setDataLoading] = useState(false);
+
+  const [cardModal, setCardModal] = useState(null); // null | 'new' | card object
+  const [sectionModal, setSectionModal] = useState(null); // null | 'new' | section object
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  function showToast(msg, type = 'success') {
+    setToast({ msg, type, key: Date.now() });
+  }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (session) loadSections();
+  }, [session]);
+
+  async function login() {
+    setAuthError(''); setAuthLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setAuthError('Email ou senha incorretos.');
+    setAuthLoading(false);
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    setSections([]); setCards([]); setSelectedSection(null);
+  }
+
+  async function loadSections() {
+    setDataLoading(true);
+    const { data } = await supabase.from('sections').select('*')
+      .eq('user_id', session.user.id).order('position', { ascending: true });
+    setSections(data || []);
+    if (data && data.length > 0) {
+      setSelectedSection(data[0]);
+      await loadCards(data[0].id);
+    }
+    setDataLoading(false);
+  }
+
+  async function loadCards(sectionId) {
+    const { data } = await supabase.from('cards').select('*')
+      .eq('section_id', sectionId).order('position', { ascending: true });
+    setCards(data || []);
+  }
+
+  async function selectSection(section) {
+    setSelectedSection(section);
+    await loadCards(section.id);
+  }
+
+  // ─── SECTION CRUD ───────────────────────────────────────────
+  async function saveSection(data) {
+    if (sectionModal === 'new') {
+      const pos = sections.length;
+      const { data: newS, error } = await supabase.from('sections').insert({
+        ...data, user_id: session.user.id, position: pos
+      }).select().single();
+      if (error) { showToast('Erro ao criar seção', 'error'); return; }
+      setSections(prev => [...prev, newS]);
+      setSelectedSection(newS);
+      setCards([]);
+      showToast('Seção criada!');
+    } else {
+      const { data: upd, error } = await supabase.from('sections').update(data)
+        .eq('id', sectionModal.id).select().single();
+      if (error) { showToast('Erro ao atualizar', 'error'); return; }
+      setSections(prev => prev.map(s => s.id === upd.id ? upd : s));
+      if (selectedSection?.id === upd.id) setSelectedSection(upd);
+      showToast('Seção atualizada!');
+    }
+    setSectionModal(null);
+  }
+
+  async function deleteSection(section) {
+    await supabase.from('cards').delete().eq('section_id', section.id);
+    await supabase.from('sections').delete().eq('id', section.id);
+    const newSections = sections.filter(s => s.id !== section.id);
+    setSections(newSections);
+    if (selectedSection?.id === section.id) {
+      setSelectedSection(newSections[0] || null);
+      if (newSections[0]) await loadCards(newSections[0].id);
+      else setCards([]);
+    }
+    setDeleteConfirm(null);
+    showToast('Seção excluída');
+  }
+
+  // ─── CARD CRUD ──────────────────────────────────────────────
+  async function saveCard(data) {
+    if (cardModal === 'new') {
+      const pos = cards.length;
+      const { data: newC, error } = await supabase.from('cards').insert({
+        ...data, user_id: session.user.id, section_id: selectedSection.id, position: pos
+      }).select().single();
+      if (error) { showToast('Erro ao criar card', 'error'); return; }
+      setCards(prev => [...prev, newC]);
+      showToast('Card criado!');
+    } else {
+      const { data: upd, error } = await supabase.from('cards').update(data)
+        .eq('id', cardModal.id).select().single();
+      if (error) { showToast('Erro ao atualizar', 'error'); return; }
+      setCards(prev => prev.map(c => c.id === upd.id ? upd : c));
+      showToast('Card atualizado!');
+    }
+    setCardModal(null);
+  }
+
+  async function deleteCard(card) {
+    await supabase.from('cards').delete().eq('id', card.id);
+    setCards(prev => prev.filter(c => c.id !== card.id));
+    setDeleteConfirm(null);
+    showToast('Card excluído');
+  }
+
+  // ─── LOGIN SCREEN ───────────────────────────────────────────
+  if (loading) return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh'}}>
+      <div className="spinner" style={{width:32,height:32,borderWidth:3}} />
+    </div>
+  );
+
+  if (!session) return (
+    <div className="login-wrap">
+      <div className="login-box">
+        <div className="login-logo">
+          <img src="logo_splashscreen.png" alt="Biel AAC" onError={e => e.target.style.display='none'} />
+        </div>
+        <div className="login-title">Painel de Configuração</div>
+        <div className="login-sub">Entre com sua conta Biel AAC para gerenciar seções e cards</div>
+        {authError && <div className="error-msg">⚠️ {authError}</div>}
+        <label className="form-label">Email</label>
+        <input className="form-input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" onKeyDown={e => e.key === 'Enter' && login()} />
+        <label className="form-label">Senha</label>
+        <input className="form-input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && login()} />
+        <button className="btn btn-primary" onClick={login} disabled={authLoading || !email || !password}>
+          {authLoading ? <span className="spinner" /> : 'Entrar'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // ─── MAIN PANEL ─────────────────────────────────────────────
+  return (
+    <div className="app-layout">
+      {/* SIDEBAR */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <img src="logo_splashscreen.png" alt="Biel AAC" style={{height:28}} onError={e => e.target.style.display='none'} />
+          <div>
+            <div className="sidebar-header-text">Biel AAC</div>
+            <div className="sidebar-header-sub">Painel de Configuração</div>
+          </div>
+        </div>
+
+        <div className="sidebar-label">Seções ({sections.length})</div>
+
+        {sections.map(s => (
+          <div key={s.id} className={`section-item ${selectedSection?.id === s.id ? 'active' : ''}`}
+            onClick={() => selectSection(s)}>
+            <div className="dot" style={{ background: colorHex(s.background_color) }} />
+            <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.name}</span>
+            <span className="count">{s.id === selectedSection?.id ? cards.length : '...'}</span>
+          </div>
+        ))}
+
+        <div className="add-section-row" onClick={() => setSectionModal('new')}>
+          + Nova seção
+        </div>
+
+        <div className="sidebar-footer">
+          <div className="user-row">
+            <div className="user-avatar">{session.user.email[0].toUpperCase()}</div>
+            <div className="user-email">{session.user.email}</div>
+          </div>
+          <button className="btn btn-ghost" style={{width:'100%',justifyContent:'center',fontSize:13}} onClick={logout}>
+            Sair da conta
+          </button>
+        </div>
+      </aside>
+
+      {/* MAIN */}
+      <main className="main">
+        {selectedSection ? (
+          <>
+            <div className="main-header">
+              <div>
+                <div className="main-title">{selectedSection.name}</div>
+                <div className="main-sub">{cards.length} {cards.length === 1 ? 'card' : 'cards'}</div>
+              </div>
+              <div style={{display:'flex',gap:8}}>
+                <button className="btn btn-ghost" onClick={() => setSectionModal(selectedSection)}>⚙️ Editar seção</button>
+                <button className="btn btn-danger" onClick={() => setDeleteConfirm({ type: 'section', item: selectedSection })}>🗑️</button>
+                <button className="btn btn-success" onClick={() => setCardModal('new')}>+ Novo card</button>
+              </div>
+            </div>
+
+            <div className="main-content">
+              {/* Section config preview */}
+              <div className="section-config">
+                <div className="section-color-badge" style={{ background: colorHex(selectedSection.background_color) }}>
+                  {iconEmoji(selectedSection.icon_name)}
+                </div>
+                <div className="section-info">
+                  <div className="section-name">{selectedSection.name}</div>
+                  <div className="section-meta">
+                    {selectedSection.speak_on_select ? '🔊 Vocaliza ao selecionar' : '🔇 Não vocaliza ao selecionar'}
+                  </div>
+                </div>
+              </div>
+
+              {dataLoading ? (
+                <div style={{textAlign:'center',padding:48}}><div className="spinner" style={{width:32,height:32,borderWidth:3,margin:'0 auto'}} /></div>
+              ) : (
+                <div className="cards-grid">
+                  {cards.map(card => (
+                    <div key={card.id} className="card-tile" style={{ background: colorHex(card.background_color) }}>
+                      {card.image_path ? (
+                        <img src={card.image_path} className="card-tile-img" alt={card.name} />
+                      ) : (
+                        <div className="card-tile-icon">{iconEmoji(card.icon_name)}</div>
+                      )}
+                      <div className="card-tile-footer">{card.name}</div>
+                      <div className="card-tile-actions">
+                        <button className="card-action-btn card-action-edit" onClick={() => setCardModal(card)} title="Editar">✏️</button>
+                        <button className="card-action-btn card-action-delete" onClick={() => setDeleteConfirm({ type: 'card', item: card })} title="Excluir">🗑️</button>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="card-add" onClick={() => setCardModal('new')}>
+                    <div className="card-add-icon">+</div>
+                    <div>Novo card</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="empty-state">
+            <div className="empty-state-icon">📂</div>
+            <div className="empty-state-title">Nenhuma seção ainda</div>
+            <div className="empty-state-sub">Crie sua primeira seção para começar a configurar o app</div>
+            <button className="btn btn-primary" style={{margin:'0 auto'}} onClick={() => setSectionModal('new')}>+ Criar primeira seção</button>
+          </div>
+        )}
+      </main>
+
+      {/* MODALS */}
+      {cardModal && (
+        <CardModal
+          card={cardModal === 'new' ? null : cardModal}
+          sectionColor={selectedSection?.background_color}
+          userId={session.user.id}
+          onSave={saveCard}
+          onClose={() => setCardModal(null)}
+        />
+      )}
+
+      {sectionModal && (
+        <SectionModal
+          section={sectionModal === 'new' ? null : sectionModal}
+          onSave={saveSection}
+          onClose={() => setSectionModal(null)}
+        />
+      )}
+
+      {deleteConfirm && (
+        <DeleteConfirm
+          title={deleteConfirm.type === 'section' ? 'Excluir seção' : 'Excluir card'}
+          msg={deleteConfirm.type === 'section'
+            ? `Tem certeza que deseja excluir a seção "${deleteConfirm.item.name}"? Todos os cards desta seção serão excluídos permanentemente.`
+            : `Tem certeza que deseja excluir o card "${deleteConfirm.item.name}"?`}
+          onConfirm={() => deleteConfirm.type === 'section' ? deleteSection(deleteConfirm.item) : deleteCard(deleteConfirm.item)}
+          onClose={() => setDeleteConfirm(null)}
+        />
+      )}
+
+      {toast && <Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={() => setToast(null)} />}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>
