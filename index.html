@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.0/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -426,7 +426,7 @@ const { useState, useEffect, useRef, useCallback } = React;
 // ─── SUPABASE CONFIG ─────────────────────────────────────────
 const SUPABASE_URL = 'https://bhlibvcmmarljcbbpzbc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobGlidmNtbWFybGpjYmJwemJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTA3MDQsImV4cCI6MjA5ODE4NjcwNH0.TJY1jR1QBzhb1_dbZafoZxEfkltSjIq4jchXFZqChYw';
-const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const BUCKET = 'card-images';
 
 // ─── CORES ───────────────────────────────────────────────────
