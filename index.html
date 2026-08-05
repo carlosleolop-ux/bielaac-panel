@@ -152,6 +152,12 @@
     .toast { position: fixed; bottom: 22px; right: 22px; background: var(--green); color: white; padding: 11px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 300; animation: slideUp .3s ease; box-shadow: 0 4px 16px rgba(0,0,0,.4); }
     .toast.error { background: var(--red); }
     @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    /* ─── LANG SELECTOR ─── */
+    .lang-bar { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+    .lang-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 18px; width: 36px; height: 32px; display: flex; align-items: center; justify-content: center; transition: all .15s; opacity: .5; }
+    .lang-btn:hover { opacity: .8; border-color: rgba(255,255,255,.3); }
+    .lang-btn.active { opacity: 1; border-color: var(--red); background: rgba(204,0,0,.15); }
+    .login-lang { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
     /* ─── SUBSECTION ─── */
     .subsection-badge { position: absolute; bottom: 0; right: 0; width: 42px; height: 42px; pointer-events: none; }
     .subsection-badge svg { width: 100%; height: 100%; }
@@ -339,14 +345,12 @@ function detectLang() {
 }
 
 // ─── LANG SELECTOR ───────────────────────────────────────────
-function LangSelector({ lang, setLang }) {
+function LangSelector({ lang, setLang, className }) {
   const langs = [{code:'pt',flag:'🇧🇷'},{code:'en',flag:'🇺🇸'},{code:'es',flag:'🇪🇸'},{code:'fr',flag:'🇫🇷'}];
   return (
-    <div style={{position:'fixed',top:12,right:16,display:'flex',gap:4,zIndex:500}}>
+    <div className={className||'lang-bar'}>
       {langs.map(l=>(
-        <button key={l.code} onClick={()=>setLang(l.code)}
-          style={{background:lang===l.code?'rgba(204,0,0,0.8)':'rgba(255,255,255,0.1)',border:'none',borderRadius:6,
-            padding:'4px 8px',cursor:'pointer',fontSize:16,opacity:lang===l.code?1:0.5,transition:'all .15s'}}>
+        <button key={l.code} className={`lang-btn${lang===l.code?' active':''}`} onClick={()=>setLang(l.code)} title={l.code.toUpperCase()}>
           {l.flag}
         </button>
       ))}
@@ -896,7 +900,6 @@ function App() {
   // ─── PANEL ────
   return (
     <div className="app-layout">
-      <LangSelector lang={lang} setLang={setLang} />
       {CropUI}
       <aside className="sidebar">
         <div className="sidebar-header">
@@ -924,6 +927,8 @@ function App() {
             <div className="user-avatar">{session.user.email[0].toUpperCase()}</div>
             <div className="user-email">{session.user.email}</div>
           </div>
+          <LangSelector lang={lang} setLang={setLang} />
+          <div style={{height:8}} />
           <button className="btn btn-ghost" style={{width:'100%',justifyContent:'center',fontSize:13}} onClick={logout}>{t.logout}</button>
         </div>
       </aside>
