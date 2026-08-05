@@ -435,7 +435,6 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
             </div>
             {tab==='icon'?<IconPicker value={icon} onChange={setIcon} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} />}
           </div>
-        </div>
           {/* Toggle subseção - só aparece quando não estiver dentro de uma subseção */}
           {!insideSubsection && (
             <div className="form-row">
