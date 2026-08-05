@@ -152,6 +152,17 @@
     .toast { position: fixed; bottom: 22px; right: 22px; background: var(--green); color: white; padding: 11px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 300; animation: slideUp .3s ease; box-shadow: 0 4px 16px rgba(0,0,0,.4); }
     .toast.error { background: var(--red); }
     @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    /* ─── SUBSECTION ─── */
+    .subsection-badge { position: absolute; bottom: 0; right: 0; width: 42px; height: 42px; pointer-events: none; }
+    .subsection-badge svg { width: 100%; height: 100%; }
+    .card-back { border-radius: 10px; background: #2C2C2C; border: 1px solid rgba(255,255,255,0.15); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; gap: 6px; transition: all .15s; }
+    .card-back:hover { background: #3A3A3A; }
+    .card-back-icon { font-size: 28px; }
+    .card-back-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); text-align: center; padding: 0 4px; }
+    .subsection-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; transition: all .15s; }
+    .subsection-toggle.active { background: rgba(2,119,189,0.1); border-color: #0277BD; }
+    .subsection-toggle input { accent-color: #0277BD; width: 16px; height: 16px; cursor: pointer; }
+    .breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
   </style>
 </head>
 <body>
@@ -364,7 +375,7 @@ function ImageUpload({ value, onChange, userId, requestCrop }) {
   );
 }
 
-function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop }) {
+function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, insideSubsection }) {
   const [name, setName] = useState(card?.name||'');
   const [voc, setVoc] = useState(card?.vocalization||'');
   const [speakImm, setSpeakImm] = useState(card?.speak_immediately||false);
@@ -372,13 +383,15 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop })
   const [tab, setTab] = useState(card?.image_path?'image':'icon');
   const [icon, setIcon] = useState(card?.icon_name||'grid_view');
   const [imgUrl, setImgUrl] = useState(card?.image_path||'');
+  const [isSubsection, setIsSubsection] = useState(card?.type==='subsection'||false);
   const [saving, setSaving] = useState(false);
 
   async function save() {
     if (!name.trim()) return;
     setSaving(true);
     await onSave({ name:name.trim().toUpperCase(), vocalization:voc.trim()||null, speak_immediately:speakImm,
-      background_color:color, icon_name:tab==='icon'?icon:null, image_path:tab==='image'?(imgUrl||null):null });
+      background_color:color, icon_name:tab==='icon'?icon:null, image_path:tab==='image'?(imgUrl||null):null,
+      type: isSubsection ? 'subsection' : 'normal' });
     setSaving(false);
   }
 
@@ -422,6 +435,17 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop })
             </div>
             {tab==='icon'?<IconPicker value={icon} onChange={setIcon} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} />}
           </div>
+        </div>
+          {/* Toggle subseção - só aparece quando não estiver dentro de uma subseção */}
+          {!insideSubsection && (
+            <div className="form-row">
+              <div className={`subsection-toggle${isSubsection?' active':''}`} onClick={()=>setIsSubsection(!isSubsection)}>
+                <input type="checkbox" checked={isSubsection} onChange={e=>setIsSubsection(e.target.checked)} onClick={e=>e.stopPropagation()} />
+                <span>📁</span>
+                <span style={{fontSize:13,color:'var(--text-muted)'}}>Este card é uma subseção (abre uma pasta de cards)</span>
+              </div>
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
@@ -518,6 +542,7 @@ function App() {
   const [sections, setSections] = useState([]);
   const [cards, setCards] = useState([]);
   const [selectedSection, setSelectedSection] = useState(null);
+  const [activeSubsection, setActiveSubsection] = useState(null);
   const [dataLoading, setDataLoading] = useState(false);
   const [cardModal, setCardModal] = useState(null);
   const [sectionModal, setSectionModal] = useState(null);
@@ -562,7 +587,18 @@ function App() {
     setCards(data||[]);
   }
 
-  async function selectSection(s) { setSelectedSection(s); await loadCards(s.id); }
+  function currentCards() {
+    if (activeSubsection) {
+      return cards.filter(c => c.parent_card_id === activeSubsection.id);
+    }
+    // Top-level: sem parent. Subseções primeiro, depois normais
+    const topLevel = cards.filter(c => !c.parent_card_id);
+    const subsections = topLevel.filter(c => c.type === 'subsection');
+    const normals = topLevel.filter(c => c.type !== 'subsection');
+    return [...subsections, ...normals];
+  }
+
+  async function selectSection(s) { setSelectedSection(s); setActiveSubsection(null); await loadCards(s.id); }
 
   // ─── SECTION CRUD ────
   async function saveSection(data) {
@@ -592,7 +628,14 @@ function App() {
   // ─── CARD CRUD ────
   async function saveCard(data) {
     if(cardModal==='new') {
-      const {data:newC,error} = await sb.from('cards').insert({...data,user_id:session.user.id,section_id:selectedSection.id,position:cards.length}).select().single();
+      const insertData = {
+        ...data,
+        user_id: session.user.id,
+        section_id: selectedSection.id,
+        position: cards.length,
+        parent_card_id: activeSubsection ? activeSubsection.id : null,
+      };
+      const {data:newC,error} = await sb.from('cards').insert(insertData).select().single();
       if(error){showToast('Erro ao criar card','error');return;}
       setCards(p=>[...p,newC]); showToast('Card criado!');
     } else {
@@ -703,8 +746,9 @@ function App() {
         {selectedSection ? <>
           <div className="main-header">
             <div>
-              <div className="main-title">{selectedSection.name}</div>
-              <div className="main-sub">{cards.length} {cards.length===1?'card':'cards'} · arraste para reordenar</div>
+              {activeSubsection && <div className="breadcrumb">{selectedSection.name} &rsaquo;</div>}
+              <div className="main-title">{activeSubsection ? activeSubsection.name : selectedSection.name}</div>
+              <div className="main-sub">{currentCards().length} {currentCards().length===1?'card':'cards'}{activeSubsection?' nesta subseção':' · arraste para reordenar'}</div>
             </div>
             <div style={{display:'flex',gap:8}}>
               <button className="btn btn-ghost" onClick={()=>setSectionModal(selectedSection)}>⚙️ Editar seção</button>
@@ -724,9 +768,16 @@ function App() {
             </div>
             {dataLoading?<div style={{textAlign:'center',padding:48}}><div className="spinner" style={{width:32,height:32,borderWidth:3,margin:'0 auto'}} /></div>:(
               <div className="cards-grid">
-                {cards.map(card=>(
+                {/* Card voltar quando dentro de subseção */}
+                {activeSubsection && (
+                  <div className="card-back" onClick={()=>setActiveSubsection(null)}>
+                    <div className="card-back-icon">←</div>
+                    <div className="card-back-label">{selectedSection.name}</div>
+                  </div>
+                )}
+                {currentCards().map(card=>(
                   <div key={card.id} className={`card-tile${dragCard?.id===card.id?' dragging':''}`}
-                    style={{background:colorHex(card.background_color)}}
+                    style={{background:colorHex(card.background_color),position:'relative'}}
                     draggable
                     onDragStart={()=>setDragCard(card)}
                     onDragOver={e=>e.preventDefault()}
@@ -735,9 +786,24 @@ function App() {
                     {card.image_path?<img src={card.image_path} className="card-tile-img" alt={card.name} />
                       :<div className="card-tile-icon">{iconEmoji(card.icon_name)}</div>}
                     <div className="card-tile-footer">{card.name}</div>
+                    {/* Badge de subseção */}
+                    {card.type==='subsection' && (
+                      <div className="subsection-badge">
+                        <svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                          <polygon points="0,42 42,42 42,0" fill="rgba(0,0,0,0.55)" />
+                          <line x1="0" y1="42" x2="42" y2="0" stroke="rgba(255,255,255,0.35)" strokeWidth="1"/>
+                          <text x="30" y="36" fontSize="14" textAnchor="middle" dominantBaseline="middle" fill="white">📁</text>
+                        </svg>
+                      </div>
+                    )}
                     <div className="card-tile-actions">
                       <button className="card-action-btn card-action-edit" onClick={()=>setCardModal(card)}>✏️</button>
                       <button className="card-action-btn card-action-delete" onClick={()=>setDeleteConfirm({type:'card',item:card})}>🗑️</button>
+                      {/* Botão para entrar na subseção */}
+                      {card.type==='subsection' && (
+                        <button className="card-action-btn" style={{background:'rgba(2,119,189,0.85)',color:'white'}}
+                          onClick={()=>setActiveSubsection(card)} title="Abrir subseção">📂</button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -757,7 +823,7 @@ function App() {
         )}
       </main>
 
-      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} />}
+      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} />}
       {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} />}
       {deleteConfirm&&<DeleteConfirm
         title={deleteConfirm.type==='section'?'Excluir seção':'Excluir card'}
