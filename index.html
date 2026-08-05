@@ -170,6 +170,190 @@
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
 
+// ─── INTERNACIONALIZAÇÃO ─────────────────────────────────────
+const STRINGS = {
+  pt: {
+    panelTitle: 'Painel de Configuração Web',
+    panelSub: 'Entre com sua conta Biel AAC para gerenciar seções e cards',
+    email: 'Email', password: 'Senha', login: 'Entrar', logout: 'Sair',
+    wrongCredentials: 'Email ou senha incorretos.',
+    sections: 'Seções', panel: 'Painel',
+    newSection: '+ Nova seção', noSection: 'Nenhuma seção ainda',
+    noSectionSub: 'Crie sua primeira seção para começar',
+    createFirstSection: '+ Criar primeira seção',
+    editSection: '⚙️ Editar seção', newCard: '+ Novo card',
+    cards: 'cards', card: 'card', dragToReorder: '· arraste para reordenar',
+    inThisSubsection: 'nesta subseção',
+    speaksOnSelect: '🔊 Vocaliza ao selecionar', noSpeak: '🔇 Não vocaliza ao selecionar',
+    cardName: 'Nome do card', vocalization: 'Vocalização',
+    vocalizationHint: 'vazio = usa o nome',
+    speakImmediately: '{t.speakImmediately}',
+    color: 'Cor', icon: 'Ícone', photo: 'Foto',
+    searchIcon: 'Buscar ícone...',
+    clickToAddPhoto: 'Clique para adicionar uma foto',
+    clickToChange: 'Clique para trocar a imagem',
+    sending: 'Enviando...',
+    isSubsection: '{t.isSubsection}',
+    cancel: 'Cancelar', save: '✓ Salvar',
+    editCard: '✏️ Editar card', newCardModal: '✏️ Novo card',
+    editSectionModal: '📂 Editar seção', newSectionModal: '📂 Nova seção',
+    sectionName: 'Nome da seção', speakOnSelect: '{t.speakOnSelect}',
+    deleteSection: 'Excluir seção', deleteCard: 'Excluir card',
+    confirmDeleteSection: (name) => `Tem certeza que deseja excluir "${name}"? Todos os cards serão excluídos permanentemente.`,
+    confirmDeleteCard: (name) => `Tem certeza que deseja excluir o card "${name}"?`,
+    delete: 'Excluir',
+    cardCreated: 'Card criado!', cardUpdated: 'Card atualizado!', cardDeleted: 'Card excluído',
+    sectionCreated: 'Seção criada!', sectionUpdated: 'Seção atualizada!', sectionDeleted: 'Seção excluída',
+    errorCreate: 'Erro ao criar', errorUpdate: 'Erro ao atualizar',
+    uploadError: 'Erro ao fazer upload: ',
+    cropTitle: '📐 Enquadre a imagem',
+    cropConfirm: '✓ Confirmar enquadramento',
+    preview: 'Prévia', remove: 'Remover',
+    openSubsection: 'Abrir subseção',
+  },
+  en: {
+    panelTitle: 'Web Configuration Panel',
+    panelSub: 'Sign in with your Biel AAC account to manage sections and cards',
+    email: 'Email', password: 'Password', login: 'Sign in', logout: 'Sign out',
+    wrongCredentials: 'Incorrect email or password.',
+    sections: 'Sections', panel: 'Panel',
+    newSection: '+ New section', noSection: 'No sections yet',
+    noSectionSub: 'Create your first section to get started',
+    createFirstSection: '+ Create first section',
+    editSection: '⚙️ Edit section', newCard: '+ New card',
+    cards: 'cards', card: 'card', dragToReorder: '· drag to reorder',
+    inThisSubsection: 'in this subsection',
+    speaksOnSelect: '🔊 Speaks on select', noSpeak: '🔇 Does not speak on select',
+    cardName: 'Card name', vocalization: 'Vocalization',
+    vocalizationHint: 'empty = uses the name',
+    speakImmediately: 'Speak immediately when tapped',
+    color: 'Color', icon: 'Icon', photo: 'Photo',
+    searchIcon: 'Search icon...',
+    clickToAddPhoto: 'Click to add a photo',
+    clickToChange: 'Click to change the image',
+    sending: 'Sending...',
+    isSubsection: 'This card is a subsection (opens a folder of cards)',
+    cancel: 'Cancel', save: '✓ Save',
+    editCard: '✏️ Edit card', newCardModal: '✏️ New card',
+    editSectionModal: '📂 Edit section', newSectionModal: '📂 New section',
+    sectionName: 'Section name', speakOnSelect: 'Speak section name on select',
+    deleteSection: 'Delete section', deleteCard: 'Delete card',
+    confirmDeleteSection: (name) => `Are you sure you want to delete "${name}"? All cards will be permanently deleted.`,
+    confirmDeleteCard: (name) => `Are you sure you want to delete the card "${name}"?`,
+    delete: 'Delete',
+    cardCreated: 'Card created!', cardUpdated: 'Card updated!', cardDeleted: 'Card deleted',
+    sectionCreated: 'Section created!', sectionUpdated: 'Section updated!', sectionDeleted: 'Section deleted',
+    errorCreate: 'Error creating', errorUpdate: 'Error updating',
+    uploadError: 'Upload error: ',
+    cropTitle: '📐 Crop the image',
+    cropConfirm: '✓ Confirm crop',
+    preview: 'Preview', remove: 'Remove',
+    openSubsection: 'Open subsection',
+  },
+  es: {
+    panelTitle: 'Panel de Configuración Web',
+    panelSub: 'Inicia sesión con tu cuenta Biel AAC para gestionar secciones y tarjetas',
+    email: 'Email', password: 'Contraseña', login: 'Entrar', logout: 'Salir',
+    wrongCredentials: 'Email o contraseña incorrectos.',
+    sections: 'Secciones', panel: 'Panel',
+    newSection: '+ Nueva sección', noSection: 'Sin secciones aún',
+    noSectionSub: 'Crea tu primera sección para comenzar',
+    createFirstSection: '+ Crear primera sección',
+    editSection: '⚙️ Editar sección', newCard: '+ Nueva tarjeta',
+    cards: 'tarjetas', card: 'tarjeta', dragToReorder: '· arrastra para reordenar',
+    inThisSubsection: 'en esta subsección',
+    speaksOnSelect: '🔊 Vocaliza al seleccionar', noSpeak: '🔇 No vocaliza al seleccionar',
+    cardName: 'Nombre de la tarjeta', vocalization: 'Vocalización',
+    vocalizationHint: 'vacío = usa el nombre',
+    speakImmediately: 'Vocalizar inmediatamente al tocar',
+    color: 'Color', icon: 'Ícono', photo: 'Foto',
+    searchIcon: 'Buscar ícono...',
+    clickToAddPhoto: 'Haz clic para añadir una foto',
+    clickToChange: 'Haz clic para cambiar la imagen',
+    sending: 'Enviando...',
+    isSubsection: 'Esta tarjeta es una subsección (abre una carpeta de tarjetas)',
+    cancel: 'Cancelar', save: '✓ Guardar',
+    editCard: '✏️ Editar tarjeta', newCardModal: '✏️ Nueva tarjeta',
+    editSectionModal: '📂 Editar sección', newSectionModal: '📂 Nueva sección',
+    sectionName: 'Nombre de la sección', speakOnSelect: 'Vocalizar el nombre de la sección al seleccionar',
+    deleteSection: 'Eliminar sección', deleteCard: 'Eliminar tarjeta',
+    confirmDeleteSection: (name) => `¿Seguro que deseas eliminar "${name}"? Todas las tarjetas serán eliminadas permanentemente.`,
+    confirmDeleteCard: (name) => `¿Seguro que deseas eliminar la tarjeta "${name}"?`,
+    delete: 'Eliminar',
+    cardCreated: '¡Tarjeta creada!', cardUpdated: '¡Tarjeta actualizada!', cardDeleted: 'Tarjeta eliminada',
+    sectionCreated: '¡Sección creada!', sectionUpdated: '¡Sección actualizada!', sectionDeleted: 'Sección eliminada',
+    errorCreate: 'Error al crear', errorUpdate: 'Error al actualizar',
+    uploadError: 'Error al subir: ',
+    cropTitle: '📐 Encuadra la imagen',
+    cropConfirm: '✓ Confirmar encuadre',
+    preview: 'Vista previa', remove: 'Eliminar',
+    openSubsection: 'Abrir subsección',
+  },
+  fr: {
+    panelTitle: 'Panneau de Configuration Web',
+    panelSub: 'Connectez-vous avec votre compte Biel AAC pour gérer les sections et cartes',
+    email: 'Email', password: 'Mot de passe', login: 'Se connecter', logout: 'Se déconnecter',
+    wrongCredentials: 'Email ou mot de passe incorrect.',
+    sections: 'Sections', panel: 'Panneau',
+    newSection: '+ Nouvelle section', noSection: 'Aucune section encore',
+    noSectionSub: 'Créez votre première section pour commencer',
+    createFirstSection: '+ Créer la première section',
+    editSection: '⚙️ Modifier la section', newCard: '+ Nouvelle carte',
+    cards: 'cartes', card: 'carte', dragToReorder: '· glisser pour réordonner',
+    inThisSubsection: 'dans cette sous-section',
+    speaksOnSelect: '🔊 Vocalise à la sélection', noSpeak: '🔇 Ne vocalise pas à la sélection',
+    cardName: 'Nom de la carte', vocalization: 'Vocalisation',
+    vocalizationHint: 'vide = utilise le nom',
+    speakImmediately: 'Vocaliser immédiatement au toucher',
+    color: 'Couleur', icon: 'Icône', photo: 'Photo',
+    searchIcon: 'Chercher une icône...',
+    clickToAddPhoto: 'Cliquez pour ajouter une photo',
+    clickToChange: "Cliquez pour changer l'image",
+    sending: 'Envoi en cours...',
+    isSubsection: 'Cette carte est une sous-section (ouvre un dossier de cartes)',
+    cancel: 'Annuler', save: '✓ Enregistrer',
+    editCard: '✏️ Modifier la carte', newCardModal: '✏️ Nouvelle carte',
+    editSectionModal: '📂 Modifier la section', newSectionModal: '📂 Nouvelle section',
+    sectionName: 'Nom de la section', speakOnSelect: 'Vocaliser le nom de la section à la sélection',
+    deleteSection: 'Supprimer la section', deleteCard: 'Supprimer la carte',
+    confirmDeleteSection: (name) => `Voulez-vous vraiment supprimer "${name}" ? Toutes les cartes seront supprimées définitivement.`,
+    confirmDeleteCard: (name) => `Voulez-vous vraiment supprimer la carte "${name}" ?`,
+    delete: 'Supprimer',
+    cardCreated: 'Carte créée !', cardUpdated: 'Carte mise à jour !', cardDeleted: 'Carte supprimée',
+    sectionCreated: 'Section créée !', sectionUpdated: 'Section mise à jour !', sectionDeleted: 'Section supprimée',
+    errorCreate: 'Erreur de création', errorUpdate: 'Erreur de mise à jour',
+    uploadError: 'Erreur de téléchargement : ',
+    cropTitle: "📐 Cadrer l'image",
+    cropConfirm: '✓ Confirmer le cadrage',
+    preview: 'Aperçu', remove: 'Supprimer',
+    openSubsection: 'Ouvrir la sous-section',
+  },
+};
+
+function detectLang() {
+  const nav = navigator.language || 'pt';
+  if (nav.startsWith('pt')) return 'pt';
+  if (nav.startsWith('es')) return 'es';
+  if (nav.startsWith('fr')) return 'fr';
+  return 'en';
+}
+
+// ─── LANG SELECTOR ───────────────────────────────────────────
+function LangSelector({ lang, setLang }) {
+  const langs = [{code:'pt',flag:'🇧🇷'},{code:'en',flag:'🇺🇸'},{code:'es',flag:'🇪🇸'},{code:'fr',flag:'🇫🇷'}];
+  return (
+    <div style={{position:'fixed',top:12,right:16,display:'flex',gap:4,zIndex:500}}>
+      {langs.map(l=>(
+        <button key={l.code} onClick={()=>setLang(l.code)}
+          style={{background:lang===l.code?'rgba(204,0,0,0.8)':'rgba(255,255,255,0.1)',border:'none',borderRadius:6,
+            padding:'4px 8px',cursor:'pointer',fontSize:16,opacity:lang===l.code?1:0.5,transition:'all .15s'}}>
+          {l.flag}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const SUPABASE_URL = 'https://bhlibvcmmarljcbbpzbc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobGlidmNtbWFybGpjYmJwemJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTA3MDQsImV4cCI6MjA5ODE4NjcwNH0.TJY1jR1QBzhb1_dbZafoZxEfkltSjIq4jchXFZqChYw';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -258,7 +442,7 @@ const ICONS = [
 const iconEmoji = name => (ICONS.find(i=>i.n===name)||{e:'📋'}).e;
 
 // ─── CROP HOOK ───────────────────────────────────────────────
-function useCrop() {
+function useCrop(t) {
   const [cropSrc, setCropSrc] = useState(null);
   const [cropResolve, setCropResolve] = useState(null);
   const imgRef = useRef(null);
@@ -300,13 +484,13 @@ function useCrop() {
 
   const CropUI = cropSrc ? (
     <div className="crop-overlay">
-      <div style={{color:'white',fontWeight:600,fontSize:15}}>📐 Enquadre a imagem</div>
+      <div style={{color:'white',fontWeight:600,fontSize:15}}>📐 {t ? t.cropTitle.replace('📐 ','') : 'Enquadre a imagem'}</div>
       <div className="crop-container">
         <img ref={imgRef} src={cropSrc} alt="crop" style={{maxWidth:'80vw',maxHeight:'60vh'}} />
       </div>
       <div className="crop-actions">
         <button className="btn btn-ghost" onClick={cancelCrop}>Cancelar</button>
-        <button className="btn btn-success" onClick={confirmCrop}>✓ Confirmar enquadramento</button>
+        <button className="btn btn-success" onClick={confirmCrop}>{t ? t.cropConfirm : '✓ Confirmar enquadramento'}</button>
       </div>
     </div>
   ) : null;
@@ -327,11 +511,11 @@ function ColorPicker({ value, onChange }) {
   ))}</div>;
 }
 
-function IconPicker({ value, onChange }) {
+function IconPicker({ value, onChange, t }) {
   const [q,setQ] = useState('');
   const filtered = q ? ICONS.filter(i=>i.n.includes(q.toLowerCase())||i.e.includes(q)) : ICONS;
   return <>
-    <input className="icon-search" placeholder="Buscar ícone..." value={q} onChange={e=>setQ(e.target.value)} />
+    <input className="icon-search" placeholder={t?t.searchIcon:'Buscar ícone...'} value={q} onChange={e=>setQ(e.target.value)} />
     <div className="icon-grid">{filtered.map(i=>(
       <button key={i.n} className={`icon-btn${value===i.n?' selected':''}`}
         title={i.n} onClick={()=>onChange(i.n)}>{i.e}</button>
@@ -339,7 +523,7 @@ function IconPicker({ value, onChange }) {
   </>;
 }
 
-function ImageUpload({ value, onChange, userId, requestCrop }) {
+function ImageUpload({ value, onChange, userId, requestCrop, t }) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef();
 
@@ -365,17 +549,17 @@ function ImageUpload({ value, onChange, userId, requestCrop }) {
       <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{display:'none'}} />
       {value ? <>
         <img src={value} className="img-preview" alt="preview" />
-        <div className="img-upload-text">Clique para trocar a imagem</div>
+        <div className="img-upload-text">{t?t.clickToChange:'Clique para trocar a imagem'}</div>
         <button className="btn btn-sm btn-danger" style={{marginTop:8}} onClick={e=>{e.stopPropagation();onChange('');}}>Remover</button>
       </> : <>
         <div style={{fontSize:30,marginBottom:8}}>{uploading?'⏳':'📷'}</div>
-        <div className="img-upload-text">{uploading?'Enviando...': <><strong>Clique</strong> para adicionar uma foto</>}</div>
+        <div className="img-upload-text">{uploading?(t?t.sending:'Enviando...'): <><strong>{t?t.login:'Clique'}</strong> {t?t.clickToAddPhoto.replace('Clique ',''):'para adicionar uma foto'}</>}</div>
       </>}
     </div>
   );
 }
 
-function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, insideSubsection }) {
+function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, insideSubsection, t }) {
   const [name, setName] = useState(card?.name||'');
   const [voc, setVoc] = useState(card?.vocalization||'');
   const [speakImm, setSpeakImm] = useState(card?.speak_immediately||false);
@@ -399,7 +583,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
         <div className="modal-header">
-          <div className="modal-title">✏️ {card?'Editar card':'Novo card'}</div>
+          <div className="modal-title">{card?t.editCard:t.newCardModal}</div>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
@@ -411,29 +595,29 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
             </div>
           </div>
           <div className="form-row">
-            <label className="form-label">Nome do card</label>
+            <label className="form-label">{t.cardName}</label>
             <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder="Ex: ÁGUA" autoFocus />
           </div>
           <div className="form-row">
-            <label className="form-label">Vocalização <span style={{fontWeight:400,opacity:.6}}>(vazio = usa o nome)</span></label>
+            <label className="form-label">{t.vocalization} <span style={{fontWeight:400,opacity:.6}}>({t.vocalizationHint})</span></label>
             <input className="form-input" value={voc} onChange={e=>setVoc(e.target.value)} placeholder="Ex: EU QUERO ÁGUA" />
           </div>
           <div className="form-row">
             <label className="checkbox-row">
               <input type="checkbox" checked={speakImm} onChange={e=>setSpeakImm(e.target.checked)} />
-              Vocalizar imediatamente ao tocar
+              {t.speakImmediately}
             </label>
           </div>
           <div className="form-row">
-            <label className="form-label">Cor</label>
+            <label className="form-label">{t.color}</label>
             <ColorPicker value={color} onChange={setColor} />
           </div>
           <div className="form-row">
             <div className="tabs">
-              <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>Ícone</button>
-              <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>Foto</button>
+              <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
+              <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
           {/* Toggle subseção - só aparece quando não estiver dentro de uma subseção */}
           {!insideSubsection && (
@@ -441,15 +625,15 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
               <div className={`subsection-toggle${isSubsection?' active':''}`} onClick={()=>setIsSubsection(!isSubsection)}>
                 <input type="checkbox" checked={isSubsection} onChange={e=>setIsSubsection(e.target.checked)} onClick={e=>e.stopPropagation()} />
                 <span>📁</span>
-                <span style={{fontSize:13,color:'var(--text-muted)'}}>Este card é uma subseção (abre uma pasta de cards)</span>
+                <span style={{fontSize:13,color:'var(--text-muted)'}}>{t.isSubsection}</span>
               </div>
             </div>
           )}
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button>
           <button className="btn btn-success" onClick={save} disabled={!name.trim()||saving}>
-            {saving?<span className="spinner"/>:'✓'} Salvar
+            {saving?<span className="spinner"/>:t.save}
           </button>
         </div>
       </div>
@@ -457,7 +641,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
   );
 }
 
-function SectionModal({ section, onSave, onClose, userId, requestCrop }) {
+function SectionModal({ section, onSave, onClose, userId, requestCrop, t }) {
   const [name, setName] = useState(section?.name||'');
   const [color, setColor] = useState(section?.background_color||DEFAULT_COLOR);
   const [icon, setIcon] = useState(section?.icon_name||'grid_view');
@@ -478,36 +662,36 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop }) {
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
         <div className="modal-header">
-          <div className="modal-title">📂 {section?'Editar seção':'Nova seção'}</div>
+          <div className="modal-title">{section?t.editSectionModal:t.newSectionModal}</div>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
           <div className="form-row">
-            <label className="form-label">Nome da seção</label>
+            <label className="form-label">{t.sectionName}</label>
             <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder="Ex: COMIDA E BEBIDA" autoFocus />
           </div>
           <div className="form-row">
             <label className="checkbox-row">
               <input type="checkbox" checked={speakOn} onChange={e=>setSpeakOn(e.target.checked)} />
-              Vocalizar o nome da seção ao selecionar
+              {t.speakOnSelect}
             </label>
           </div>
           <div className="form-row">
-            <label className="form-label">Cor</label>
+            <label className="form-label">{t.color}</label>
             <ColorPicker value={color} onChange={setColor} />
           </div>
           <div className="form-row">
             <div className="tabs">
-              <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>Ícone</button>
-              <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>Foto</button>
+              <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
+              <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
+          <button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button>
           <button className="btn btn-success" onClick={save} disabled={!name.trim()||saving}>
-            {saving?<span className="spinner"/>:'✓'} Salvar
+            {saving?<span className="spinner"/>:t.save}
           </button>
         </div>
       </div>
@@ -515,15 +699,15 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop }) {
   );
 }
 
-function DeleteConfirm({ title, msg, onConfirm, onClose }) {
+function DeleteConfirm({ title, msg, onConfirm, onClose, t }) {
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal" style={{maxWidth:380}}>
         <div className="modal-header"><div className="modal-title">🗑️ {title}</div><button className="close-btn" onClick={onClose}>×</button></div>
         <div className="modal-body"><p style={{fontSize:14,color:'var(--text-muted)',lineHeight:1.6}}>{msg}</p></div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>Cancelar</button>
-          <button className="btn btn-danger" onClick={onConfirm}>Excluir</button>
+          <button className="btn btn-ghost" onClick={onClose}>{t ? t.cancel : 'Cancelar'}</button>
+          <button className="btn btn-danger" onClick={onConfirm}>{t ? t.delete : 'Excluir'}</button>
         </div>
       </div>
     </div>
@@ -532,6 +716,8 @@ function DeleteConfirm({ title, msg, onConfirm, onClose }) {
 
 // ─── MAIN APP ────────────────────────────────────────────────
 function App() {
+  const [lang, setLang] = useState(detectLang());
+  const t = STRINGS[lang];
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState('');
@@ -549,7 +735,7 @@ function App() {
   const [toast, setToast] = useState(null);
   const [dragSection, setDragSection] = useState(null);
   const [dragCard, setDragCard] = useState(null);
-  const { requestCrop, CropUI } = useCrop();
+  const { requestCrop, CropUI } = useCrop(t);
 
   function showToast(msg, type='success') { setToast({msg,type,key:Date.now()}); }
 
@@ -564,7 +750,7 @@ function App() {
   async function login() {
     setAuthError(''); setAuthLoading(true);
     const {error} = await sb.auth.signInWithPassword({email,password});
-    if(error) setAuthError('Email ou senha incorretos.');
+    if(error) setAuthError(t.wrongCredentials);
     setAuthLoading(false);
   }
 
@@ -603,14 +789,14 @@ function App() {
   async function saveSection(data) {
     if(sectionModal==='new') {
       const {data:newS,error} = await sb.from('sections').insert({...data,user_id:session.user.id,position:sections.length}).select().single();
-      if(error){showToast('Erro ao criar seção','error');return;}
-      setSections(p=>[...p,newS]); setSelectedSection(newS); setCards([]); showToast('Seção criada!');
+      if(error){showToast(t.errorCreate,'error');return;}
+      setSections(p=>[...p,newS]); setSelectedSection(newS); setCards([]); showToast(t.sectionCreated);
     } else {
       const {data:upd,error} = await sb.from('sections').update(data).eq('id',sectionModal.id).select().single();
-      if(error){showToast('Erro ao atualizar','error');return;}
+      if(error){showToast(t.errorUpdate,'error');return;}
       setSections(p=>p.map(s=>s.id===upd.id?upd:s));
       if(selectedSection?.id===upd.id) setSelectedSection(upd);
-      showToast('Seção atualizada!');
+      showToast(t.sectionUpdated);
     }
     setSectionModal(null);
   }
@@ -621,7 +807,7 @@ function App() {
     const ns = sections.filter(x=>x.id!==s.id);
     setSections(ns);
     if(selectedSection?.id===s.id){ setSelectedSection(ns[0]||null); if(ns[0]) await loadCards(ns[0].id); else setCards([]); }
-    setDeleteConfirm(null); showToast('Seção excluída');
+    setDeleteConfirm(null); showToast(t.sectionDeleted);
   }
 
   // ─── CARD CRUD ────
@@ -635,12 +821,12 @@ function App() {
         parent_card_id: activeSubsection ? activeSubsection.id : null,
       };
       const {data:newC,error} = await sb.from('cards').insert(insertData).select().single();
-      if(error){showToast('Erro ao criar card','error');return;}
-      setCards(p=>[...p,newC]); showToast('Card criado!');
+      if(error){showToast(t.errorCreate,'error');return;}
+      setCards(p=>[...p,newC]); showToast(t.cardCreated);
     } else {
       const {data:upd,error} = await sb.from('cards').update(data).eq('id',cardModal.id).select().single();
-      if(error){showToast('Erro ao atualizar','error');return;}
-      setCards(p=>p.map(c=>c.id===upd.id?upd:c)); showToast('Card atualizado!');
+      if(error){showToast(t.errorUpdate,'error');return;}
+      setCards(p=>p.map(c=>c.id===upd.id?upd:c)); showToast(t.cardUpdated);
     }
     setCardModal(null);
   }
@@ -648,7 +834,7 @@ function App() {
   async function deleteCard(card) {
     await sb.from('cards').delete().eq('id',card.id);
     setCards(p=>p.filter(c=>c.id!==card.id));
-    setDeleteConfirm(null); showToast('Card excluído');
+    setDeleteConfirm(null); showToast(t.cardDeleted);
   }
 
   // ─── DRAG & DROP SECTIONS ────
@@ -692,8 +878,8 @@ function App() {
 
         </div>
         <div className="login-right">
-          <div className="login-title">Painel de Configuração Web</div>
-          <div className="login-sub">Entre com sua conta Biel AAC para gerenciar seções e cards</div>
+          <div className="login-title">{t.panelTitle}</div>
+          <div className="login-sub">{t.panelSub}</div>
           {authError&&<div className="error-msg">⚠️ {authError}</div>}
           <label className="form-label">Email</label>
           <input className="form-input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="seu@email.com" onKeyDown={e=>e.key==='Enter'&&login()} />
@@ -710,13 +896,14 @@ function App() {
   // ─── PANEL ────
   return (
     <div className="app-layout">
+      <LangSelector lang={lang} setLang={setLang} />
       {CropUI}
       <aside className="sidebar">
         <div className="sidebar-header">
           <img src="logo_branca.png" alt="Biel AAC" onError={e=>e.target.style.display='none'} style={{height:54}} />
-          <div><div className="sidebar-header-text">Biel AAC</div><div className="sidebar-header-sub">Painel</div></div>
+          <div><div className="sidebar-header-text">Biel AAC</div><div className="sidebar-header-sub">{t.panel}</div></div>
         </div>
-        <div className="sidebar-label">Seções ({sections.length})</div>
+        <div className="sidebar-label">{t.sections} ({sections.length})</div>
         {sections.map(s=>(
           <div key={s.id}
             className={`section-item${selectedSection?.id===s.id?' active':''}${dragSection?.id===s.id?' dragging':''}`}
@@ -731,13 +918,13 @@ function App() {
             <span className="count">{s.id===selectedSection?.id?cards.length:'·'}</span>
           </div>
         ))}
-        <div className="add-section-row" onClick={()=>setSectionModal('new')}>+ Nova seção</div>
+        <div className="add-section-row" onClick={()=>setSectionModal('new')}>{t.newSection}</div>
         <div className="sidebar-footer">
           <div className="user-row">
             <div className="user-avatar">{session.user.email[0].toUpperCase()}</div>
             <div className="user-email">{session.user.email}</div>
           </div>
-          <button className="btn btn-ghost" style={{width:'100%',justifyContent:'center',fontSize:13}} onClick={logout}>Sair</button>
+          <button className="btn btn-ghost" style={{width:'100%',justifyContent:'center',fontSize:13}} onClick={logout}>{t.logout}</button>
         </div>
       </aside>
 
@@ -747,12 +934,12 @@ function App() {
             <div>
               {activeSubsection && <div className="breadcrumb">{selectedSection.name} &rsaquo;</div>}
               <div className="main-title">{activeSubsection ? activeSubsection.name : selectedSection.name}</div>
-              <div className="main-sub">{currentCards().length} {currentCards().length===1?'card':'cards'}{activeSubsection?' nesta subseção':' · arraste para reordenar'}</div>
+              <div className="main-sub">{currentCards().length} {currentCards().length===1?t.card:t.cards}{activeSubsection?` ${t.inThisSubsection}`:` ${t.dragToReorder}`}</div>
             </div>
             <div style={{display:'flex',gap:8}}>
-              <button className="btn btn-ghost" onClick={()=>setSectionModal(selectedSection)}>⚙️ Editar seção</button>
+              <button className="btn btn-ghost" onClick={()=>setSectionModal(selectedSection)}>{t.editSection}</button>
               <button className="btn btn-danger" onClick={()=>setDeleteConfirm({type:'section',item:selectedSection})}>🗑️</button>
-              <button className="btn btn-success" onClick={()=>setCardModal('new')}>+ Novo card</button>
+              <button className="btn btn-success" onClick={()=>setCardModal('new')}>{t.newCard}</button>
             </div>
           </div>
           <div className="main-content">
@@ -762,7 +949,7 @@ function App() {
               </div>
               <div className="section-info">
                 <div className="section-name">{selectedSection.name}</div>
-                <div className="section-meta">{selectedSection.speak_on_select?'🔊 Vocaliza ao selecionar':'🔇 Não vocaliza ao selecionar'}</div>
+                <div className="section-meta">{selectedSection.speak_on_select?t.speaksOnSelect:t.noSpeak}</div>
               </div>
             </div>
             {dataLoading?<div style={{textAlign:'center',padding:48}}><div className="spinner" style={{width:32,height:32,borderWidth:3,margin:'0 auto'}} /></div>:(
@@ -807,7 +994,7 @@ function App() {
                   </div>
                 ))}
                 <div className="card-add" onClick={()=>setCardModal('new')}>
-                  <div style={{fontSize:22}}>+</div><div>Novo card</div>
+                  <div style={{fontSize:22}}>+</div><div>{t.newCard.replace('+ ','')}</div>
                 </div>
               </div>
             )}
@@ -815,20 +1002,20 @@ function App() {
         </> : (
           <div className="empty-state">
             <div className="empty-state-icon">📂</div>
-            <div className="empty-state-title">Nenhuma seção ainda</div>
-            <div style={{color:'var(--text-muted)',fontSize:14,marginBottom:20}}>Crie sua primeira seção para começar</div>
-            <button className="btn btn-primary" style={{margin:'0 auto'}} onClick={()=>setSectionModal('new')}>+ Criar primeira seção</button>
+            <div className="empty-state-title">{t.noSection}</div>
+            <div style={{color:'var(--text-muted)',fontSize:14,marginBottom:20}}>{t.noSectionSub}</div>
+            <button className="btn btn-primary" style={{margin:'0 auto'}} onClick={()=>setSectionModal('new')}>{t.createFirstSection}</button>
           </div>
         )}
       </main>
 
-      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} />}
-      {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} />}
+      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} t={t} />}
+      {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} t={t} />}
       {deleteConfirm&&<DeleteConfirm
-        title={deleteConfirm.type==='section'?'Excluir seção':'Excluir card'}
-        msg={deleteConfirm.type==='section'?`Tem certeza que deseja excluir "${deleteConfirm.item.name}"? Todos os cards serão excluídos permanentemente.`:`Tem certeza que deseja excluir o card "${deleteConfirm.item.name}"?`}
+        title={deleteConfirm.type==='section'?t.deleteSection:t.deleteCard}
+        msg={deleteConfirm.type==='section'?t.confirmDeleteSection(deleteConfirm.item.name):t.confirmDeleteCard(deleteConfirm.item.name)}
         onConfirm={()=>deleteConfirm.type==='section'?deleteSection(deleteConfirm.item):deleteCard(deleteConfirm.item)}
-        onClose={()=>setDeleteConfirm(null)} />}
+        onClose={()=>setDeleteConfirm(null)} t={t} />}
       {toast&&<Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={()=>setToast(null)} />}
     </div>
   );
