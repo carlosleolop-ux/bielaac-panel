@@ -195,17 +195,17 @@ const STRINGS = {
     speaksOnSelect: '🔊 Vocaliza ao selecionar', noSpeak: '🔇 Não vocaliza ao selecionar',
     cardName: 'Nome do card', vocalization: 'Vocalização',
     vocalizationHint: 'vazio = usa o nome',
-    speakImmediately: '{t.speakImmediately}',
+    speakImmediately: 'Vocalizar imediatamente ao tocar',
     color: 'Cor', icon: 'Ícone', photo: 'Foto',
     searchIcon: 'Buscar ícone...',
     clickToAddPhoto: 'Clique para adicionar uma foto',
     clickToChange: 'Clique para trocar a imagem',
     sending: 'Enviando...',
-    isSubsection: '{t.isSubsection}',
+    isSubsection: 'Este card é uma subseção (abre uma pasta de cards)',
     cancel: 'Cancelar', save: '✓ Salvar',
     editCard: '✏️ Editar card', newCardModal: '✏️ Novo card',
     editSectionModal: '📂 Editar seção', newSectionModal: '📂 Nova seção',
-    sectionName: 'Nome da seção', speakOnSelect: '{t.speakOnSelect}',
+    sectionName: 'Nome da seção', speakOnSelect: 'Vocalizar o nome da seção ao selecionar',
     deleteSection: 'Excluir seção', deleteCard: 'Excluir card',
     confirmDeleteSection: (name) => `Tem certeza que deseja excluir "${name}"? Todos os cards serão excluídos permanentemente.`,
     confirmDeleteCard: (name) => `Tem certeza que deseja excluir o card "${name}"?`,
@@ -559,7 +559,7 @@ function ImageUpload({ value, onChange, userId, requestCrop, t }) {
         <button className="btn btn-sm btn-danger" style={{marginTop:8}} onClick={e=>{e.stopPropagation();onChange('');}}>Remover</button>
       </> : <>
         <div style={{fontSize:30,marginBottom:8}}>{uploading?'⏳':'📷'}</div>
-        <div className="img-upload-text">{uploading?(t?t.sending:'Enviando...'): <><strong>{t?t.login:'Clique'}</strong> {t?t.clickToAddPhoto.replace('Clique ',''):'para adicionar uma foto'}</>}</div>
+        <div className="img-upload-text">{uploading?(t?t.sending:'Enviando...'): <><strong>{'Clique'}</strong> {t?t.clickToAddPhoto.replace('Clique ',''):t?t.clickToAddPhoto:'para adicionar uma foto'}</>}</div>
       </>}
     </div>
   );
