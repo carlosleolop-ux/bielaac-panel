@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biel AAC — Painel de Configuração</title>
+  <title>Biel AAC — Configuration Panel</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -202,6 +202,9 @@ const STRINGS = {
     clickToChange: 'Clique para trocar a imagem',
     sending: 'Enviando...',
     isSubsection: 'Este card é uma subseção (abre uma pasta de cards)',
+    placeholderSectionName: 'Ex: COMIDA E BEBIDA',
+    placeholderCardName: 'Ex: ÁGUA',
+    placeholderVocalization: 'Ex: EU QUERO ÁGUA',
     cancel: 'Cancelar', save: '✓ Salvar',
     editCard: '✏️ Editar card', newCardModal: '✏️ Novo card',
     editSectionModal: '📂 Editar seção', newSectionModal: '📂 Nova seção',
@@ -241,6 +244,9 @@ const STRINGS = {
     clickToChange: 'Click to change the image',
     sending: 'Sending...',
     isSubsection: 'This card is a subsection (opens a folder of cards)',
+    placeholderSectionName: 'E.g. FOOD AND DRINKS',
+    placeholderCardName: 'E.g. WATER',
+    placeholderVocalization: 'E.g. I WANT WATER',
     cancel: 'Cancel', save: '✓ Save',
     editCard: '✏️ Edit card', newCardModal: '✏️ New card',
     editSectionModal: '📂 Edit section', newSectionModal: '📂 New section',
@@ -280,6 +286,9 @@ const STRINGS = {
     clickToChange: 'Haz clic para cambiar la imagen',
     sending: 'Enviando...',
     isSubsection: 'Esta tarjeta es una subsección (abre una carpeta de tarjetas)',
+    placeholderSectionName: 'Ej: COMIDA Y BEBIDA',
+    placeholderCardName: 'Ej: AGUA',
+    placeholderVocalization: 'Ej: QUIERO AGUA',
     cancel: 'Cancelar', save: '✓ Guardar',
     editCard: '✏️ Editar tarjeta', newCardModal: '✏️ Nueva tarjeta',
     editSectionModal: '📂 Editar sección', newSectionModal: '📂 Nueva sección',
@@ -319,6 +328,9 @@ const STRINGS = {
     clickToChange: "Cliquez pour changer l'image",
     sending: 'Envoi en cours...',
     isSubsection: 'Cette carte est une sous-section (ouvre un dossier de cartes)',
+    placeholderSectionName: 'Ex: NOURRITURE ET BOISSONS',
+    placeholderCardName: 'Ex: EAU',
+    placeholderVocalization: 'Ex: JE VEUX DE L\'EAU',
     cancel: 'Annuler', save: '✓ Enregistrer',
     editCard: '✏️ Modifier la carte', newCardModal: '✏️ Nouvelle carte',
     editSectionModal: '📂 Modifier la section', newSectionModal: '📂 Nouvelle section',
@@ -546,7 +558,7 @@ function ImageUpload({ value, onChange, userId, requestCrop, t }) {
       if (error) throw error;
       const { data } = sb.storage.from(BUCKET).getPublicUrl(fileName);
       onChange(data.publicUrl);
-    } catch(err) { alert('Erro ao fazer upload: '+err.message); }
+    } catch(err) { alert((t?t.uploadError:'Erro ao fazer upload: ')+err.message); }
     finally { setUploading(false); e.target.value=''; }
   }
 
@@ -559,7 +571,7 @@ function ImageUpload({ value, onChange, userId, requestCrop, t }) {
         <button className="btn btn-sm btn-danger" style={{marginTop:8}} onClick={e=>{e.stopPropagation();onChange('');}}>Remover</button>
       </> : <>
         <div style={{fontSize:30,marginBottom:8}}>{uploading?'⏳':'📷'}</div>
-        <div className="img-upload-text">{uploading?(t?t.sending:'Enviando...'): <><strong>{'Clique'}</strong> {t?t.clickToAddPhoto.replace('Clique ',''):t?t.clickToAddPhoto:'para adicionar uma foto'}</>}</div>
+        <div className="img-upload-text">{uploading?(t?t.sending:'Enviando...'): <span>{t?t.clickToAddPhoto:'Clique para adicionar uma foto'}</span>}</div>
       </>}
     </div>
   );
@@ -602,11 +614,11 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
           </div>
           <div className="form-row">
             <label className="form-label">{t.cardName}</label>
-            <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder="Ex: ÁGUA" autoFocus />
+            <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder={t?t.placeholderCardName:"Ex: ÁGUA"} autoFocus />
           </div>
           <div className="form-row">
             <label className="form-label">{t.vocalization} <span style={{fontWeight:400,opacity:.6}}>({t.vocalizationHint})</span></label>
-            <input className="form-input" value={voc} onChange={e=>setVoc(e.target.value)} placeholder="Ex: EU QUERO ÁGUA" />
+            <input className="form-input" value={voc} onChange={e=>setVoc(e.target.value)} placeholder={t?t.placeholderVocalization:"Ex: EU QUERO ÁGUA"} />
           </div>
           <div className="form-row">
             <label className="checkbox-row">
@@ -674,7 +686,7 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t }) {
         <div className="modal-body">
           <div className="form-row">
             <label className="form-label">{t.sectionName}</label>
-            <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder="Ex: COMIDA E BEBIDA" autoFocus />
+            <input className="form-input" value={name} onChange={e=>setName(e.target.value)} placeholder={t?t.placeholderSectionName:"Ex: COMIDA E BEBIDA"} autoFocus />
           </div>
           <div className="form-row">
             <label className="checkbox-row">
@@ -995,7 +1007,7 @@ function App() {
                       {/* Botão para entrar na subseção */}
                       {card.type==='subsection' && (
                         <button className="card-action-btn" style={{background:'rgba(2,119,189,0.85)',color:'white'}}
-                          onClick={()=>setActiveSubsection(card)} title="Abrir subseção">📂</button>
+                          onClick={()=>setActiveSubsection(card)} title={t?t.openSubsection:"Abrir subseção"}>📂</button>
                       )}
                     </div>
                   </div>
