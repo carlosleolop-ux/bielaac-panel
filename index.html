@@ -171,6 +171,17 @@
     .subsection-toggle.active { background: rgba(2,119,189,0.1); border-color: #0277BD; }
     .subsection-toggle input { accent-color: #0277BD; width: 16px; height: 16px; cursor: pointer; }
     .breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    /* ─── BACKUP MODAL ─── */
+    .backup-section { border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+    .backup-section-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .backup-section-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; }
+    .backup-file-row { display: flex; align-items: center; gap: 10px; background: var(--black); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text-muted); }
+    .backup-progress-wrap { margin-top: 10px; }
+    .backup-progress-bar { width: 100%; height: 6px; background: var(--black); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+    .backup-progress-fill { height: 100%; background: var(--red); transition: width .2s ease; }
+    .backup-progress-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; text-align: center; }
+    .backup-menu-row { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-muted); border: 1px solid var(--border); transition: all .15s; }
+    .backup-menu-row:hover { color: var(--text); border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,.04); }
   </style>
 </head>
 <body>
@@ -221,6 +232,27 @@ const STRINGS = {
     cropConfirm: '✓ Confirmar enquadramento',
     preview: 'Prévia', remove: 'Remover',
     openSubsection: 'Abrir subseção',
+    backupMenuLabel: '💾 Backup / Restaurar',
+    backupTitle: '💾 Backup e Restauração',
+    backupSub: 'Exporte todos os dados desta conta ou importe um backup para substituir os dados atuais.',
+    exportData: '📥 Exportar dados',
+    exportDesc: 'Baixa um arquivo com todas as seções, cards, imagens e configurações desta conta. Use como backup ou para copiar os cards para outra conta.',
+    exportBtn: 'Exportar agora',
+    importData: '📤 Importar dados',
+    importDesc: 'Substitui TODOS os dados desta conta pelos dados de um arquivo de backup exportado anteriormente.',
+    selectFile: 'Selecionar arquivo',
+    changeFile: 'Trocar arquivo',
+    importWarningTitle: '⚠️ Isso vai substituir tudo',
+    importWarningMsg: (count) => `Você está prestes a importar ${count} card(s). Todas as seções e cards atuais desta conta serão APAGADOS PERMANENTEMENTE e substituídos pelos dados do arquivo. Essa ação não pode ser desfeita. Deseja continuar?`,
+    confirmImport: 'Sim, substituir tudo',
+    exporting: 'Exportando dados...',
+    importing: 'Importando dados...',
+    exportSuccess: 'Backup exportado com sucesso!',
+    importSuccess: 'Dados importados com sucesso!',
+    exportError: 'Erro ao exportar: ',
+    importError: 'Erro ao importar: ',
+    invalidFile: 'Arquivo inválido ou corrompido.',
+    backupFileInfo: (sections, cards, date) => `${sections} seção(ões), ${cards} card(s) — exportado em ${date}`,
   },
   en: {
     panelTitle: 'Web Configuration Panel',
@@ -263,6 +295,27 @@ const STRINGS = {
     cropConfirm: '✓ Confirm crop',
     preview: 'Preview', remove: 'Remove',
     openSubsection: 'Open subsection',
+    backupMenuLabel: '💾 Backup / Restore',
+    backupTitle: '💾 Backup and Restore',
+    backupSub: 'Export all data from this account or import a backup to replace the current data.',
+    exportData: '📥 Export data',
+    exportDesc: 'Downloads a file with all sections, cards, images and settings from this account. Use it as a backup or to copy cards to another account.',
+    exportBtn: 'Export now',
+    importData: '📤 Import data',
+    importDesc: 'Replaces ALL data in this account with the data from a previously exported backup file.',
+    selectFile: 'Select file',
+    changeFile: 'Change file',
+    importWarningTitle: '⚠️ This will replace everything',
+    importWarningMsg: (count) => `You are about to import ${count} card(s). All current sections and cards in this account will be PERMANENTLY DELETED and replaced with the data from the file. This action cannot be undone. Continue?`,
+    confirmImport: 'Yes, replace everything',
+    exporting: 'Exporting data...',
+    importing: 'Importing data...',
+    exportSuccess: 'Backup exported successfully!',
+    importSuccess: 'Data imported successfully!',
+    exportError: 'Error exporting: ',
+    importError: 'Error importing: ',
+    invalidFile: 'Invalid or corrupted file.',
+    backupFileInfo: (sections, cards, date) => `${sections} section(s), ${cards} card(s) — exported on ${date}`,
   },
   es: {
     panelTitle: 'Panel de Configuración Web',
@@ -305,6 +358,27 @@ const STRINGS = {
     cropConfirm: '✓ Confirmar encuadre',
     preview: 'Vista previa', remove: 'Eliminar',
     openSubsection: 'Abrir subsección',
+    backupMenuLabel: '💾 Copia de seguridad',
+    backupTitle: '💾 Copia de seguridad y restauración',
+    backupSub: 'Exporta todos los datos de esta cuenta o importa una copia de seguridad para reemplazar los datos actuales.',
+    exportData: '📥 Exportar datos',
+    exportDesc: 'Descarga un archivo con todas las secciones, tarjetas, imágenes y configuraciones de esta cuenta. Úsalo como copia de seguridad o para copiar las tarjetas a otra cuenta.',
+    exportBtn: 'Exportar ahora',
+    importData: '📤 Importar datos',
+    importDesc: 'Reemplaza TODOS los datos de esta cuenta con los datos de un archivo de copia de seguridad exportado anteriormente.',
+    selectFile: 'Seleccionar archivo',
+    changeFile: 'Cambiar archivo',
+    importWarningTitle: '⚠️ Esto reemplazará todo',
+    importWarningMsg: (count) => `Estás a punto de importar ${count} tarjeta(s). Todas las secciones y tarjetas actuales de esta cuenta serán ELIMINADAS PERMANENTEMENTE y reemplazadas por los datos del archivo. Esta acción no se puede deshacer. ¿Continuar?`,
+    confirmImport: 'Sí, reemplazar todo',
+    exporting: 'Exportando datos...',
+    importing: 'Importando datos...',
+    exportSuccess: '¡Copia de seguridad exportada con éxito!',
+    importSuccess: '¡Datos importados con éxito!',
+    exportError: 'Error al exportar: ',
+    importError: 'Error al importar: ',
+    invalidFile: 'Archivo inválido o dañado.',
+    backupFileInfo: (sections, cards, date) => `${sections} sección(es), ${cards} tarjeta(s) — exportado el ${date}`,
   },
   fr: {
     panelTitle: 'Panneau de Configuration Web',
@@ -347,6 +421,27 @@ const STRINGS = {
     cropConfirm: '✓ Confirmer le cadrage',
     preview: 'Aperçu', remove: 'Supprimer',
     openSubsection: 'Ouvrir la sous-section',
+    backupMenuLabel: '💾 Sauvegarde / Restauration',
+    backupTitle: '💾 Sauvegarde et restauration',
+    backupSub: 'Exportez toutes les données de ce compte ou importez une sauvegarde pour remplacer les données actuelles.',
+    exportData: '📥 Exporter les données',
+    exportDesc: 'Télécharge un fichier avec toutes les sections, cartes, images et paramètres de ce compte. À utiliser comme sauvegarde ou pour copier les cartes vers un autre compte.',
+    exportBtn: 'Exporter maintenant',
+    importData: '📤 Importer les données',
+    importDesc: 'Remplace TOUTES les données de ce compte par les données d’un fichier de sauvegarde exporté précédemment.',
+    selectFile: 'Sélectionner un fichier',
+    changeFile: 'Changer de fichier',
+    importWarningTitle: '⚠️ Cela va tout remplacer',
+    importWarningMsg: (count) => `Vous êtes sur le point d'importer ${count} carte(s). Toutes les sections et cartes actuelles de ce compte seront DÉFINITIVEMENT SUPPRIMÉES et remplacées par les données du fichier. Cette action est irréversible. Continuer ?`,
+    confirmImport: 'Oui, tout remplacer',
+    exporting: 'Exportation des données...',
+    importing: 'Importation des données...',
+    exportSuccess: 'Sauvegarde exportée avec succès !',
+    importSuccess: 'Données importées avec succès !',
+    exportError: 'Erreur lors de l’exportation : ',
+    importError: 'Erreur lors de l’importation : ',
+    invalidFile: 'Fichier invalide ou corrompu.',
+    backupFileInfo: (sections, cards, date) => `${sections} section(s), ${cards} carte(s) — exporté le ${date}`,
   },
 };
 
@@ -895,6 +990,281 @@ function DeleteConfirm({ title, msg, onConfirm, onClose, t }) {
   );
 }
 
+// ─── BACKUP / RESTORE ────────────────────────────────────────
+function BackupModal({ onClose, userId, t, showToast, onImportComplete }) {
+  const [mode, setMode] = useState('menu'); // menu | confirmImport | exporting | importing
+  const [progress, setProgress] = useState({ done: 0, total: 0, label: '' });
+  const [importFile, setImportFile] = useState(null);
+  const [importData, setImportData] = useState(null);
+  const [importError, setImportError] = useState('');
+  const fileInputRef = useRef();
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function urlToBase64(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return blobToBase64(blob);
+  }
+
+  async function base64ToBlob(dataUrl) {
+    const res = await fetch(dataUrl);
+    return res.blob();
+  }
+
+  async function handleExport() {
+    setMode('exporting');
+    setProgress({ done: 0, total: 0, label: t.exporting });
+    try {
+      const { data: sections, error: secErr } = await sb.from('sections').select('*')
+        .eq('user_id', userId).order('position', { ascending: true });
+      if (secErr) throw secErr;
+
+      const sectionIds = (sections || []).map(s => s.id);
+      let cards = [];
+      if (sectionIds.length) {
+        const { data: cardsData, error: cardErr } = await sb.from('cards').select('*')
+          .in('section_id', sectionIds).order('position', { ascending: true });
+        if (cardErr) throw cardErr;
+        cards = cardsData || [];
+      }
+
+      const sectionIdMap = {};
+      sections.forEach((s, i) => { sectionIdMap[s.id] = 'sec_' + i; });
+      const cardIdMap = {};
+      cards.forEach((c, i) => { cardIdMap[c.id] = 'card_' + i; });
+
+      const totalImages = sections.filter(s => s.image_path).length + cards.filter(c => c.image_path).length;
+      let doneImages = 0;
+      setProgress({ done: 0, total: totalImages, label: t.exporting });
+
+      const exportSections = [];
+      for (const s of sections) {
+        let imageData = null;
+        if (s.image_path) {
+          try { imageData = await urlToBase64(s.image_path); } catch (e) { imageData = null; }
+          doneImages++; setProgress({ done: doneImages, total: totalImages, label: t.exporting });
+        }
+        exportSections.push({
+          local_id: sectionIdMap[s.id], name: s.name, background_color: s.background_color,
+          icon_name: s.icon_name, image_data: imageData, speak_on_select: s.speak_on_select, position: s.position,
+        });
+      }
+
+      const exportCards = [];
+      for (const c of cards) {
+        let imageData = null;
+        if (c.image_path) {
+          try { imageData = await urlToBase64(c.image_path); } catch (e) { imageData = null; }
+          doneImages++; setProgress({ done: doneImages, total: totalImages, label: t.exporting });
+        }
+        exportCards.push({
+          local_id: cardIdMap[c.id], section_local_id: sectionIdMap[c.section_id],
+          parent_local_id: c.parent_card_id ? (cardIdMap[c.parent_card_id] || null) : null,
+          name: c.name, vocalization: c.vocalization, speak_immediately: c.speak_immediately,
+          background_color: c.background_color, icon_name: c.icon_name, image_data: imageData,
+          type: c.type, position: c.position,
+        });
+      }
+
+      const payload = {
+        app: 'biel-aac-backup', version: 1, exported_at: new Date().toISOString(),
+        sections: exportSections, cards: exportCards,
+      };
+
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url; a.download = `biel-aac-backup-${dateStr}.json`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast(t.exportSuccess);
+      setMode('menu');
+    } catch (err) {
+      showToast(t.exportError + err.message, 'error');
+      setMode('menu');
+    }
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (!parsed || parsed.app !== 'biel-aac-backup' || !Array.isArray(parsed.sections) || !Array.isArray(parsed.cards)) {
+          setImportError(t.invalidFile); setImportData(null); setImportFile(null); return;
+        }
+        setImportError(''); setImportData(parsed); setImportFile(file);
+      } catch (err) {
+        setImportError(t.invalidFile); setImportData(null); setImportFile(null);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  async function handleImportConfirmed() {
+    setMode('importing');
+    try {
+      const totalSteps = importData.sections.length + importData.cards.length + 1;
+      let done = 0;
+      setProgress({ done, total: totalSteps, label: t.importing });
+
+      // 1. Apaga todas as seções/cards atuais do usuário
+      const { data: existingSections } = await sb.from('sections').select('id').eq('user_id', userId);
+      const existingSectionIds = (existingSections || []).map(s => s.id);
+      if (existingSectionIds.length) {
+        await sb.from('cards').delete().in('section_id', existingSectionIds);
+        await sb.from('sections').delete().in('id', existingSectionIds);
+      }
+      done++; setProgress({ done, total: totalSteps, label: t.importing });
+
+      // 2. Insere seções
+      const sectionIdMap = {};
+      const sortedSections = [...importData.sections].sort((a, b) => (a.position || 0) - (b.position || 0));
+      for (let i = 0; i < sortedSections.length; i++) {
+        const s = sortedSections[i];
+        let imagePath = null;
+        if (s.image_data) {
+          const blob = await base64ToBlob(s.image_data);
+          const fileName = `${userId}/${Date.now()}_sec_${i}.jpg`;
+          const { error: upErr } = await sb.storage.from(BUCKET).upload(fileName, blob, { contentType: blob.type || 'image/jpeg', upsert: true });
+          if (!upErr) { const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(fileName); imagePath = pub.publicUrl; }
+        }
+        const { data: newS, error } = await sb.from('sections').insert({
+          user_id: userId, name: s.name, background_color: s.background_color, icon_name: s.icon_name,
+          image_path: imagePath, speak_on_select: !!s.speak_on_select, position: i,
+        }).select().single();
+        if (error) throw error;
+        sectionIdMap[s.local_id] = newS.id;
+        done++; setProgress({ done, total: totalSteps, label: t.importing });
+      }
+
+      // 3. Insere cards (sem parent ainda)
+      const cardIdMap = {};
+      const pendingParents = [];
+      const sortedCards = [...importData.cards].sort((a, b) => (a.position || 0) - (b.position || 0));
+      for (let i = 0; i < sortedCards.length; i++) {
+        const c = sortedCards[i];
+        const sectionRealId = sectionIdMap[c.section_local_id];
+        if (!sectionRealId) { done++; continue; }
+        let imagePath = null;
+        if (c.image_data) {
+          const blob = await base64ToBlob(c.image_data);
+          const fileName = `${userId}/${Date.now()}_card_${i}.jpg`;
+          const { error: upErr } = await sb.storage.from(BUCKET).upload(fileName, blob, { contentType: blob.type || 'image/jpeg', upsert: true });
+          if (!upErr) { const { data: pub } = sb.storage.from(BUCKET).getPublicUrl(fileName); imagePath = pub.publicUrl; }
+        }
+        const { data: newC, error } = await sb.from('cards').insert({
+          user_id: userId, section_id: sectionRealId, parent_card_id: null, name: c.name,
+          vocalization: c.vocalization, speak_immediately: !!c.speak_immediately,
+          background_color: c.background_color, icon_name: c.icon_name, image_path: imagePath,
+          type: c.type || 'normal', position: i,
+        }).select().single();
+        if (error) throw error;
+        cardIdMap[c.local_id] = newC.id;
+        if (c.parent_local_id) pendingParents.push({ newId: newC.id, parentLocalId: c.parent_local_id });
+        done++; setProgress({ done, total: totalSteps, label: t.importing });
+      }
+
+      // 4. Corrige referências de subseção (parent_card_id)
+      for (const p of pendingParents) {
+        const parentRealId = cardIdMap[p.parentLocalId];
+        if (parentRealId) await sb.from('cards').update({ parent_card_id: parentRealId }).eq('id', p.newId);
+      }
+
+      showToast(t.importSuccess);
+      setImportData(null); setImportFile(null); setMode('menu');
+      if (onImportComplete) await onImportComplete();
+      onClose();
+    } catch (err) {
+      showToast(t.importError + err.message, 'error');
+      setMode('menu');
+    }
+  }
+
+  const totalImportCards = importData ? importData.cards.length : 0;
+
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && mode === 'menu' && onClose()}>
+      <div className="modal" style={{ maxWidth: 480 }}>
+        <div className="modal-header">
+          <div className="modal-title">{t.backupTitle}</div>
+          {mode === 'menu' && <button className="close-btn" onClick={onClose}>×</button>}
+        </div>
+        <div className="modal-body">
+          {mode === 'menu' && <>
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 18 }}>{t.backupSub}</p>
+
+            <div className="backup-section">
+              <div className="backup-section-title">{t.exportData}</div>
+              <div className="backup-section-desc">{t.exportDesc}</div>
+              <button className="btn btn-success" onClick={handleExport}>{t.exportBtn}</button>
+            </div>
+
+            <div className="backup-section">
+              <div className="backup-section-title">{t.importData}</div>
+              <div className="backup-section-desc">{t.importDesc}</div>
+              <input ref={fileInputRef} type="file" accept="application/json" onChange={handleFileSelect} style={{ display: 'none' }} />
+              {importFile ? (
+                <div className="backup-file-row">
+                  📄 {importFile.name}
+                  <button className="btn btn-ghost btn-sm" style={{ marginLeft: 'auto' }} onClick={() => fileInputRef.current.click()}>{t.changeFile}</button>
+                </div>
+              ) : (
+                <button className="btn btn-ghost" onClick={() => fileInputRef.current.click()}>{t.selectFile}</button>
+              )}
+              {importError && <div className="error-msg" style={{ marginTop: 10 }}>⚠️ {importError}</div>}
+              {importData && (
+                <button className="btn btn-danger" style={{ marginTop: 12 }} onClick={() => setMode('confirmImport')}>{t.importData}</button>
+              )}
+            </div>
+          </>}
+
+          {mode === 'confirmImport' && (
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--red)', marginBottom: 10 }}>{t.importWarningTitle}</p>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>{t.importWarningMsg(totalImportCards)}</p>
+            </div>
+          )}
+
+          {(mode === 'exporting' || mode === 'importing') && (
+            <div className="backup-progress-wrap">
+              <div style={{ textAlign: 'center' }}><span className="spinner" /></div>
+              <div className="backup-progress-label">{progress.label} {progress.total > 0 ? `(${progress.done}/${progress.total})` : ''}</div>
+              {progress.total > 0 && (
+                <div className="backup-progress-bar">
+                  <div className="backup-progress-fill" style={{ width: `${Math.min(100, (progress.done / progress.total) * 100)}%` }} />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        {mode === 'menu' && (
+          <div className="modal-footer"><button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button></div>
+        )}
+        {mode === 'confirmImport' && (
+          <div className="modal-footer">
+            <button className="btn btn-ghost" onClick={() => setMode('menu')}>{t.cancel}</button>
+            <button className="btn btn-danger" onClick={handleImportConfirmed}>{t.confirmImport}</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN APP ────────────────────────────────────────────────
 function App() {
   const [lang, setLang] = useState(detectLang());
@@ -916,6 +1286,7 @@ function App() {
   const [toast, setToast] = useState(null);
   const [dragSection, setDragSection] = useState(null);
   const [dragCard, setDragCard] = useState(null);
+  const [backupModal, setBackupModal] = useState(false);
   const { requestCrop, CropUI } = useCrop(t);
 
   // Ref para saber se algum modal está aberto no momento (evita reset de estado
@@ -1141,6 +1512,8 @@ function App() {
           </div>
           <LangSelector lang={lang} setLang={setLang} />
           <div style={{height:8}} />
+          <div className="backup-menu-row" onClick={()=>setBackupModal(true)}>{t.backupMenuLabel}</div>
+          <div style={{height:8}} />
           <button className="btn btn-ghost" style={{width:'100%',justifyContent:'center',fontSize:13}} onClick={logout}>{t.logout}</button>
         </div>
       </aside>
@@ -1234,6 +1607,15 @@ function App() {
         onConfirm={()=>deleteConfirm.type==='section'?deleteSection(deleteConfirm.item):deleteCard(deleteConfirm.item)}
         onClose={()=>setDeleteConfirm(null)} t={t} />}
       {toast&&<Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={()=>setToast(null)} />}
+      {backupModal&&<BackupModal
+        onClose={()=>setBackupModal(false)}
+        userId={session.user.id}
+        t={t}
+        showToast={showToast}
+        onImportComplete={async ()=>{
+          setSelectedSection(null); setActiveSubsection(null); setCards([]);
+          await loadSections();
+        }} />}
     </div>
   );
 }
