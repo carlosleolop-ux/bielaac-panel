@@ -395,66 +395,224 @@ const colorHex = v => (COLORS.find(c=>c.value===v)||COLORS[0]).hex;
 const DEFAULT_COLOR = COLORS[0].value;
 
 const ICONS = [
-  {n:'wc',e:'🚻'},{n:'bathroom',e:'🛁'},{n:'shower',e:'🚿'},{n:'soap',e:'🧼'},
-  {n:'clean_hands',e:'🤲'},{n:'water_drop',e:'💧'},{n:'local_drink',e:'🥤'},
-  {n:'coffee',e:'☕'},{n:'free_breakfast',e:'🍳'},{n:'restaurant',e:'🍽️'},
-  {n:'lunch_dining',e:'🥡'},{n:'dinner_dining',e:'🍴'},{n:'fastfood',e:'🍔'},
-  {n:'local_pizza',e:'🍕'},{n:'ramen_dining',e:'🍜'},{n:'rice_bowl',e:'🍚'},
-  {n:'bakery_dining',e:'🥐'},{n:'cookie',e:'🍪'},{n:'cake',e:'🎂'},
-  {n:'icecream',e:'🍦'},{n:'egg_alt',e:'🍳'},{n:'local_bar',e:'🧃'},
-  {n:'local_grocery_store',e:'🏪'},{n:'bedtime',e:'🌙'},{n:'bed',e:'🛏️'},
-  {n:'weekend',e:'🛋️'},{n:'spa',e:'🧘'},{n:'self_improvement',e:'🧘'},
-  {n:'sentiment_very_satisfied',e:'😄'},{n:'sentiment_satisfied',e:'😊'},
-  {n:'sentiment_neutral',e:'😐'},{n:'sentiment_dissatisfied',e:'😞'},
-  {n:'sentiment_very_dissatisfied',e:'😢'},{n:'mood',e:'😊'},{n:'mood_bad',e:'😠'},
-  {n:'favorite',e:'❤️'},{n:'thumb_up',e:'👍'},{n:'thumb_down',e:'👎'},
-  {n:'warning',e:'⚠️'},{n:'help',e:'❓'},{n:'psychology',e:'🧠'},
-  {n:'healing',e:'💊'},{n:'local_hospital',e:'🏥'},{n:'medical_services',e:'🩺'},
-  {n:'medication',e:'💊'},{n:'vaccines',e:'💉'},{n:'sick',e:'🤒'},
-  {n:'thermostat',e:'🌡️'},{n:'accessible',e:'♿'},{n:'hearing',e:'👂'},
-  {n:'sign_language',e:'🤟'},{n:'visibility',e:'👁️'},{n:'person',e:'👤'},
-  {n:'group',e:'👥'},{n:'groups',e:'👨‍👩‍👧‍👦'},{n:'family_restroom',e:'👨‍👩‍👧'},
-  {n:'child_care',e:'👶'},{n:'elderly',e:'🧓'},{n:'man',e:'👨'},
-  {n:'woman',e:'👩'},{n:'waving_hand',e:'👋'},{n:'handshake',e:'🤝'},
-  {n:'chat',e:'💬'},{n:'record_voice_over',e:'🗣️'},{n:'phone',e:'📱'},
-  {n:'smartphone',e:'📲'},{n:'volume_up',e:'🔊'},{n:'volume_off',e:'🔇'},
-  {n:'notifications',e:'🔔'},{n:'sports_soccer',e:'⚽'},{n:'sports_basketball',e:'🏀'},
-  {n:'sports_tennis',e:'🎾'},{n:'sports_volleyball',e:'🏐'},{n:'pool',e:'🏊'},
-  {n:'surfing',e:'🏄'},{n:'skateboarding',e:'🛹'},{n:'fitness_center',e:'💪'},
-  {n:'directions_bike',e:'🚲'},{n:'hiking',e:'🥾'},{n:'directions_run',e:'🏃'},
-  {n:'directions_walk',e:'🚶'},{n:'sports_martial_arts',e:'🥋'},
-  {n:'sports_golf',e:'⛳'},{n:'kayaking',e:'🚣'},{n:'rowing',e:'🚣'},
-  {n:'scuba_diving',e:'🤿'},{n:'sailing',e:'⛵'},{n:'snowboarding',e:'🏂'},
-  {n:'downhill_skiing',e:'⛷️'},{n:'music_note',e:'🎵'},{n:'headphones',e:'🎧'},
-  {n:'mic',e:'🎤'},{n:'piano',e:'🎹'},{n:'brush',e:'🖌️'},{n:'palette',e:'🎨'},
-  {n:'theater_comedy',e:'🎭'},{n:'movie',e:'🎬'},{n:'tv',e:'📺'},
-  {n:'photo_camera',e:'📷'},{n:'book',e:'📚'},{n:'games',e:'🎮'},
-  {n:'sports_esports',e:'🕹️'},{n:'toys',e:'🧸'},{n:'school',e:'🏫'},
-  {n:'abc',e:'🔤'},{n:'calculate',e:'🔢'},{n:'science',e:'🔬'},
-  {n:'backpack',e:'🎒'},{n:'laptop',e:'💻'},{n:'home',e:'🏠'},
-  {n:'kitchen',e:'🍳'},{n:'chair',e:'🪑'},{n:'local_laundry_service',e:'🧺'},
-  {n:'light',e:'💡'},{n:'ac_unit',e:'❄️'},{n:'outdoor_grill',e:'🔥'},
-  {n:'park',e:'🌳'},{n:'beach_access',e:'🏖️'},{n:'waves',e:'🌊'},
-  {n:'wb_sunny',e:'☀️'},{n:'cloud',e:'☁️'},{n:'umbrella',e:'☂️'},
-  {n:'local_florist',e:'🌸'},{n:'eco',e:'🌿'},{n:'grass',e:'🌱'},
-  {n:'forest',e:'🌲'},{n:'pets',e:'🐾'},{n:'emoji_nature',e:'🦋'},
-  {n:'directions_car',e:'🚗'},{n:'local_taxi',e:'🚕'},{n:'directions_bus',e:'🚌'},
-  {n:'train',e:'🚆'},{n:'flight',e:'✈️'},{n:'two_wheeler',e:'🏍️'},
-  {n:'emergency',e:'🚑'},{n:'local_police',e:'🚔'},{n:'location_on',e:'📍'},
-  {n:'store',e:'🏪'},{n:'shopping_cart',e:'🛒'},{n:'museum',e:'🏛️'},
-  {n:'hotel',e:'🏨'},{n:'stadium',e:'🏟️'},{n:'church',e:'⛪'},
-  {n:'schedule',e:'⏰'},{n:'today',e:'📅'},{n:'event',e:'📆'},
-  {n:'celebration',e:'🎉'},{n:'card_giftcard',e:'🎁'},{n:'check',e:'✅'},
-  {n:'close',e:'❌'},{n:'done',e:'✔️'},{n:'stop',e:'⛔'},
-  {n:'play_arrow',e:'▶️'},{n:'pan_tool',e:'✋'},{n:'search',e:'🔍'},
-  {n:'share',e:'📤'},{n:'lock',e:'🔒'},{n:'lock_open',e:'🔓'},
-  {n:'checkroom',e:'👔'},{n:'style',e:'👗'},{n:'content_cut',e:'✂️'},
-  {n:'arrow_upward',e:'⬆️'},{n:'arrow_downward',e:'⬇️'},
-  {n:'arrow_forward',e:'➡️'},{n:'arrow_back',e:'⬅️'},{n:'near_me',e:'📌'},
-  {n:'volunteer_activism',e:'🤝'},{n:'star',e:'⭐'},{n:'emoji_emotions',e:'😀'},
-  {n:'waving_hand',e:'👋'},{n:'looks_one',e:'1️⃣'},{n:'looks_two',e:'2️⃣'},
-  {n:'looks_3',e:'3️⃣'},{n:'looks_4',e:'4️⃣'},{n:'looks_5',e:'5️⃣'},
-  {n:'nightlight',e:'🌙'},{n:'face',e:'😶'},{n:'grid_view',e:'⊞'},
+  {n:"wc",e:"🚻",k:{pt:["banheiro","wc","toalete","lavabo","sanitario"],en:["bathroom","toilet","restroom","wc","lavatory"],es:["baño","servicio","aseo","wc","lavabo"],fr:["toilettes","wc","salle de bain","lavabo","sanitaire"]}},
+  {n:"bathroom",e:"🛁",k:{pt:["banheiro","banho","chuveiro","higiene"],en:["bathroom","bath","shower","hygiene"],es:["baño","ducha","higiene","aseo"],fr:["salle de bain","douche","bain","hygiène"]}},
+  {n:"shower",e:"🚿",k:{pt:["chuveiro","banho","higiene","lavar"],en:["shower","bath","hygiene","wash"],es:["ducha","baño","higiene","lavar"],fr:["douche","bain","hygiène","laver"]}},
+  {n:"bathtub",e:"🛁",k:{pt:["banheira","banho","tina","relaxar"],en:["bathtub","bath","tub","relax"],es:["bañera","tina","baño","relajar"],fr:["baignoire","bain","se détendre","relaxer"]}},
+  {n:"soap",e:"🧼",k:{pt:["sabao","sabonete","lavar","higiene","limpar"],en:["soap","wash","hygiene","clean","hands"],es:["jabón","lavar","higiene","limpio","manos"],fr:["savon","laver","hygiène","propre","mains"]}},
+  {n:"clean_hands",e:"🤲",k:{pt:["lavar","maos","higiene","limpar","sabao"],en:["wash","hands","hygiene","clean","soap"],es:["lavar","manos","higiene","limpio","jabón"],fr:["laver","mains","hygiène","propre","savon"]}},
+  {n:"water_drop",e:"💧",k:{pt:["agua","beber","sede","liquido","hidratacao"],en:["water","drink","thirst","liquid","hydration"],es:["agua","beber","sed","líquido","hidratación"],fr:["eau","boire","soif","liquide","hydratation"]}},
+  {n:"local_drink",e:"🥤",k:{pt:["beber","agua","sede","copo","liquido"],en:["drink","water","thirst","glass","liquid"],es:["beber","agua","sed","vaso","líquido"],fr:["boire","eau","soif","verre","liquide"]}},
+  {n:"coffee",e:"☕",k:{pt:["cafe","xicara","beber","quente","manha"],en:["coffee","cup","drink","hot","morning"],es:["café","taza","beber","caliente","mañana"],fr:["café","tasse","boire","chaud","matin"]}},
+  {n:"free_breakfast",e:"🍳",k:{pt:["cafe","manha","xicara","pao","desjejum"],en:["breakfast","morning","coffee","bread","meal"],es:["desayuno","mañana","café","pan","comida"],fr:["petit-déjeuner","matin","café","pain","repas"]}},
+  {n:"restaurant",e:"🍽️",k:{pt:["comida","comer","almoco","jantar","fome","restaurante"],en:["food","eat","lunch","dinner","hungry","restaurant"],es:["comida","comer","almuerzo","cena","hambre","restaurante"],fr:["nourriture","manger","déjeuner","dîner","faim","restaurant"]}},
+  {n:"lunch_dining",e:"🥡",k:{pt:["almoco","comida","fome","comer","refeicao"],en:["lunch","food","hungry","eat","meal"],es:["almuerzo","comida","hambre","comer","comida"],fr:["déjeuner","nourriture","faim","manger","repas"]}},
+  {n:"dinner_dining",e:"🍴",k:{pt:["jantar","comida","noite","comer","refeicao"],en:["dinner","food","night","eat","meal"],es:["cena","comida","noche","comer","comida"],fr:["dîner","nourriture","soir","manger","repas"]}},
+  {n:"fastfood",e:"🍔",k:{pt:["lanche","hamburguer","fome","comida","rapido"],en:["fast food","burger","hungry","food","quick"],es:["comida rápida","hamburguesa","hambre","comida"],fr:["restauration rapide","hamburger","faim","nourriture"]}},
+  {n:"ramen_dining",e:"🍜",k:{pt:["macarrao","sopa","comida","comer","massa"],en:["noodles","soup","food","eat","pasta"],es:["fideos","sopa","comida","comer","pasta"],fr:["nouilles","soupe","nourriture","manger","pâtes"]}},
+  {n:"rice_bowl",e:"🍚",k:{pt:["arroz","tigela","comida","comer","refeicao"],en:["rice","bowl","food","eat","meal"],es:["arroz","cuenco","comida","comer"],fr:["riz","bol","nourriture","manger"]}},
+  {n:"bakery_dining",e:"🥐",k:{pt:["pao","padaria","lanche","comer","croissant"],en:["bread","bakery","snack","eat","croissant"],es:["pan","panadería","merienda","comer","croissant"],fr:["pain","boulangerie","collation","manger","croissant"]}},
+  {n:"cake",e:"🎂",k:{pt:["bolo","doce","festa","aniversario","sobremesa"],en:["cake","sweet","party","birthday","dessert"],es:["pastel","dulce","fiesta","cumpleaños","postre"],fr:["gâteau","sucré","fête","anniversaire","dessert"]}},
+  {n:"icecream",e:"🍦",k:{pt:["sorvete","doce","gelado","sobremesa","casquinha"],en:["ice cream","sweet","cold","dessert","cone"],es:["helado","dulce","frío","postre","cucurucho"],fr:["glace","sucré","froid","dessert","cornet"]}},
+  {n:"cookie",e:"🍪",k:{pt:["biscoito","bolacha","doce","lanche","cookies"],en:["cookie","biscuit","sweet","snack","treat"],es:["galleta","dulce","merienda","snack"],fr:["biscuit","sucré","collation","snack"]}},
+  {n:"local_pizza",e:"🍕",k:{pt:["pizza","comida","lanche","comer","italiana"],en:["pizza","food","snack","eat","italian"],es:["pizza","comida","merienda","comer","italiana"],fr:["pizza","nourriture","collation","manger","italienne"]}},
+  {n:"egg_alt",e:"🍳",k:{pt:["ovo","cafe","manha","comida","proteina"],en:["egg","breakfast","food","protein"],es:["huevo","desayuno","comida","proteína"],fr:["œuf","petit-déjeuner","nourriture","protéine"]}},
+  {n:"local_bar",e:"🧃",k:{pt:["suco","bebida","copo","beber","fruta"],en:["juice","drink","glass","beverage","fruit"],es:["jugo","bebida","vaso","fruta"],fr:["jus","boisson","verre","fruit"]}},
+  {n:"local_grocery_store",e:"🏪",k:{pt:["mercado","compras","supermercado","feira","comprar"],en:["grocery","shopping","supermarket","market","buy"],es:["supermercado","compras","mercado","tienda","comprar"],fr:["épicerie","courses","supermarché","marché","acheter"]}},
+  {n:"bedtime",e:"🌙",k:{pt:["dormir","cama","sono","noite","descanso","cansado"],en:["sleep","bed","tired","night","rest","sleepy"],es:["dormir","cama","sueño","noche","descanso","cansado"],fr:["dormir","lit","sommeil","nuit","repos","fatigué"]}},
+  {n:"bed",e:"🛏️",k:{pt:["cama","dormir","descanso","sono","quarto"],en:["bed","sleep","rest","bedroom"],es:["cama","dormir","descanso","habitación"],fr:["lit","dormir","repos","chambre"]}},
+  {n:"weekend",e:"🛋️",k:{pt:["sofa","descanso","casa","relaxar","fim de semana"],en:["sofa","rest","home","relax","weekend"],es:["sofá","descanso","casa","relajar","fin de semana"],fr:["canapé","repos","maison","relaxer","week-end"]}},
+  {n:"self_improvement",e:"🧘",k:{pt:["relaxar","meditar","calma","descanso","paz"],en:["relax","meditate","calm","rest","peace"],es:["relajar","meditar","calma","descanso","paz"],fr:["relaxer","méditer","calme","repos","paix"]}},
+  {n:"spa",e:"🧘",k:{pt:["spa","relaxar","descanso","calma","bem estar"],en:["spa","relax","rest","calm","wellbeing"],es:["spa","relajar","descanso","calma","bienestar"],fr:["spa","relaxer","repos","calme","bien-être"]}},
+  {n:"sentiment_very_satisfied",e:"😄",k:{pt:["feliz","alegre","contente","sorriso","bom","animado"],en:["happy","joyful","glad","smile","good","excited"],es:["feliz","alegre","contento","sonrisa","bueno","animado"],fr:["heureux","joyeux","content","sourire","bien","animé"]}},
+  {n:"sentiment_satisfied",e:"😊",k:{pt:["feliz","contente","bem","sorriso","bom"],en:["happy","content","well","smile","good"],es:["feliz","contento","bien","sonrisa","bueno"],fr:["heureux","content","bien","sourire","bon"]}},
+  {n:"sentiment_neutral",e:"😐",k:{pt:["neutro","mais ou menos","assim assim","regular","ok"],en:["neutral","so so","okay","regular","fine"],es:["neutral","más o menos","regular","así así","ok"],fr:["neutre","comme ci comme ça","régulier","ok"]}},
+  {n:"sentiment_dissatisfied",e:"😞",k:{pt:["triste","mal","chateado","infeliz","chorando"],en:["sad","bad","upset","unhappy","crying"],es:["triste","mal","molesto","infeliz","llorando"],fr:["triste","mal","mécontent","malheureux","pleurant"]}},
+  {n:"sentiment_very_dissatisfied",e:"😢",k:{pt:["muito triste","mal","chorando","infeliz","desesperado"],en:["very sad","bad","crying","unhappy","desperate"],es:["muy triste","mal","llorando","infeliz","desesperado"],fr:["très triste","mal","pleurant","malheureux","désespéré"]}},
+  {n:"mood",e:"😊",k:{pt:["feliz","sorriso","alegre","bom humor","contente"],en:["happy","smile","cheerful","good mood","content"],es:["feliz","sonrisa","alegre","buen humor","contento"],fr:["heureux","sourire","joyeux","bonne humeur","content"]}},
+  {n:"mood_bad",e:"😠",k:{pt:["triste","mal humor","bravo","chateado","raiva"],en:["sad","bad mood","angry","upset","mad"],es:["triste","mal humor","enojado","molesto","rabia"],fr:["triste","mauvaise humeur","en colère","mécontent","fâché"]}},
+  {n:"favorite",e:"❤️",k:{pt:["amor","coracao","gostar","amar","carinho","afeto"],en:["love","heart","like","care","affection"],es:["amor","corazón","gustar","amar","cariño","afecto"],fr:["amour","cœur","aimer","soin","affection"]}},
+  {n:"thumb_up",e:"👍",k:{pt:["sim","bom","legal","gostei","positivo","ok","joinha"],en:["yes","good","cool","like","positive","ok","thumbs up"],es:["sí","bueno","genial","me gusta","positivo","ok"],fr:["oui","bien","cool","aimer","positif","ok","pouce"]}},
+  {n:"thumb_down",e:"👎",k:{pt:["nao","ruim","negativo","nao gostei","mal"],en:["no","bad","negative","dislike","thumbs down"],es:["no","malo","negativo","no me gusta"],fr:["non","mauvais","négatif","ne pas aimer"]}},
+  {n:"warning",e:"⚠️",k:{pt:["atencao","cuidado","alerta","perigo","aviso"],en:["warning","careful","alert","danger","notice"],es:["atención","cuidado","alerta","peligro","aviso"],fr:["attention","prudence","alerte","danger","avis"]}},
+  {n:"help",e:"❓",k:{pt:["ajuda","socorro","preciso","auxilio","apoio"],en:["help","rescue","need","assist","support"],es:["ayuda","socorro","necesito","auxilio","apoyo"],fr:["aide","secours","besoin","assistance","soutien"]}},
+  {n:"psychology",e:"🧠",k:{pt:["mente","pensar","cabeca","psicologia","emocao","terapia","tratamento"],en:["mind","think","head","psychology","emotion","therapy","treatment"],es:["mente","pensar","cabeza","psicología","emoción","terapia","tratamiento"],fr:["esprit","penser","tête","psychologie","émotion","thérapie","traitement"]}},
+  {n:"healing",e:"💊",k:{pt:["cura","melhorar","bem","saude","recuperar"],en:["healing","better","well","health","recover"],es:["curación","mejorar","bien","salud","recuperar"],fr:["guérison","mieux","bien","santé","récupérer"]}},
+  {n:"local_hospital",e:"🏥",k:{pt:["hospital","medico","saude","doente","pronto socorro","emergencia"],en:["hospital","doctor","health","sick","emergency","medical"],es:["hospital","médico","salud","enfermo","emergencia"],fr:["hôpital","médecin","santé","malade","urgence"]}},
+  {n:"medical_services",e:"🩺",k:{pt:["medico","saude","consulta","doutor","clinica"],en:["doctor","health","appointment","clinic","medical"],es:["médico","salud","consulta","doctor","clínica"],fr:["médecin","santé","consultation","docteur","clinique"]}},
+  {n:"medication",e:"💊",k:{pt:["remedio","medicamento","comprimido","tomar","farmacia"],en:["medicine","pill","tablet","take","pharmacy"],es:["medicina","medicamento","pastilla","tomar","farmacia"],fr:["médicament","pilule","comprimé","prendre","pharmacie"]}},
+  {n:"vaccines",e:"💉",k:{pt:["vacina","injecao","seringa","imunizacao","protecao"],en:["vaccine","injection","syringe","immunization","protection"],es:["vacuna","inyección","jeringa","inmunización","protección"],fr:["vaccin","injection","seringue","immunisation","protection"]}},
+  {n:"sick",e:"🤒",k:{pt:["doente","mal","febre","gripe","resfriado","nausea"],en:["sick","ill","fever","flu","cold","nausea"],es:["enfermo","mal","fiebre","gripe","resfriado","náusea"],fr:["malade","mal","fièvre","grippe","rhume","nausée"]}},
+  {n:"local_pharmacy",e:"💊",k:{pt:["farmacia","remedio","medicamento","comprar"],en:["pharmacy","medicine","drugstore","buy"],es:["farmacia","medicina","medicamento","comprar"],fr:["pharmacie","médicament","médicaments","acheter"]}},
+  {n:"thermostat",e:"🌡️",k:{pt:["febre","temperatura","termometro","quente","doente"],en:["fever","temperature","thermometer","hot","sick"],es:["fiebre","temperatura","termómetro","caliente","enfermo"],fr:["fièvre","température","thermomètre","chaud","malade"]}},
+  {n:"accessible",e:"♿",k:{pt:["cadeira","rodas","acessibilidade","deficiencia","mobilidade"],en:["wheelchair","accessibility","disability","mobility"],es:["silla de ruedas","accesibilidad","discapacidad","movilidad"],fr:["fauteuil roulant","accessibilité","handicap","mobilité"]}},
+  {n:"hearing",e:"👂",k:{pt:["ouvir","ouvido","surdo","escutar","som"],en:["hearing","ear","deaf","listen","sound"],es:["oído","sordo","escuchar","sonido"],fr:["ouïe","oreille","sourd","écouter","son"]}},
+  {n:"sign_language",e:"🤟",k:{pt:["libras","sinais","comunicacao","surdos","linguagem"],en:["sign language","signals","communication","deaf","language"],es:["lenguaje de señas","señas","comunicación","sordos"],fr:["langue des signes","signaux","communication","sourds"]}},
+  {n:"visibility",e:"👁️",k:{pt:["ver","olho","visao","enxergar","olhar"],en:["see","eye","vision","look","sight"],es:["ver","ojo","visión","mirar","vista"],fr:["voir","œil","vision","regarder","vue"]}},
+  {n:"person",e:"👤",k:{pt:["pessoa","eu","usuario","perfil","individuo"],en:["person","me","user","profile","individual"],es:["persona","yo","usuario","perfil","individuo"],fr:["personne","moi","utilisateur","profil","individu"]}},
+  {n:"group",e:"👥",k:{pt:["grupo","amigos","turma","pessoas","equipe"],en:["group","friends","team","people","crew"],es:["grupo","amigos","equipo","personas"],fr:["groupe","amis","équipe","personnes"]}},
+  {n:"family_restroom",e:"👨‍👩‍👧",k:{pt:["familia","pais","filhos","crianca","juntos"],en:["family","parents","children","kids","together"],es:["familia","padres","hijos","niños","juntos"],fr:["famille","parents","enfants","ensemble"]}},
+  {n:"child_care",e:"👶",k:{pt:["crianca","bebe","filho","cuidar","pequeno"],en:["child","baby","kid","care","little"],es:["niño","bebé","hijo","cuidar","pequeño"],fr:["enfant","bébé","fils","soin","petit"]}},
+  {n:"elderly",e:"🧓",k:{pt:["idoso","velho","avo","bengala","senior"],en:["elderly","old","grandparent","cane","senior"],es:["anciano","viejo","abuelo","bastón","mayor"],fr:["personne âgée","vieux","grand-parent","canne","senior"]}},
+  {n:"man",e:"👨",k:{pt:["homem","pai","masculino","menino","adulto"],en:["man","father","male","boy","adult"],es:["hombre","padre","masculino","niño","adulto"],fr:["homme","père","masculin","garçon","adulte"]}},
+  {n:"woman",e:"👩",k:{pt:["mulher","mae","feminino","menina","adulta"],en:["woman","mother","female","girl","adult"],es:["mujer","madre","femenino","niña","adulta"],fr:["femme","mère","féminin","fille","adulte"]}},
+  {n:"waving_hand",e:"👋",k:{pt:["oi","ola","tchau","aceno","cumprimento","saudacao"],en:["hi","hello","bye","wave","greeting"],es:["hola","adiós","saludo","saludar"],fr:["bonjour","salut","au revoir","signe","salutation"]}},
+  {n:"handshake",e:"🤝",k:{pt:["acordo","cumprimento","aperto","ola","encontrar"],en:["agreement","greeting","handshake","hello","meet"],es:["acuerdo","saludo","apretón","hola","encontrar"],fr:["accord","salutation","poignée de main","bonjour","rencontrer"]}},
+  {n:"chat",e:"💬",k:{pt:["conversar","falar","mensagem","chat","dialogo"],en:["chat","talk","message","conversation","dialogue"],es:["conversar","hablar","mensaje","chat","diálogo"],fr:["discuter","parler","message","chat","dialogue"]}},
+  {n:"record_voice_over",e:"🗣️",k:{pt:["falar","voz","comunicar","dizer","expressar"],en:["speak","voice","communicate","say","express"],es:["hablar","voz","comunicar","decir","expresar"],fr:["parler","voix","communiquer","dire","exprimer"]}},
+  {n:"phone",e:"📱",k:{pt:["telefone","ligar","chamar","contato","fixo"],en:["phone","call","contact","landline"],es:["teléfono","llamar","contacto","fijo"],fr:["téléphone","appeler","contact","fixe"]}},
+  {n:"smartphone",e:"📲",k:{pt:["celular","telefone","aparelho","mobile"],en:["cellphone","mobile","phone","device"],es:["celular","móvil","teléfono","dispositivo"],fr:["portable","mobile","téléphone","appareil"]}},
+  {n:"volume_up",e:"🔊",k:{pt:["volume","som","alto","ouvir","barulho"],en:["volume","sound","loud","hear","noise"],es:["volumen","sonido","alto","oír","ruido"],fr:["volume","son","fort","entendre","bruit"]}},
+  {n:"volume_off",e:"🔇",k:{pt:["silencio","mudo","sem som","quieto","shhh"],en:["silent","mute","quiet","no sound"],es:["silencio","mudo","sin sonido","quieto"],fr:["silence","muet","sans son","tranquille"]}},
+  {n:"notifications",e:"🔔",k:{pt:["aviso","alerta","notificacao","sino","lembrete"],en:["alert","notification","bell","reminder","warning"],es:["aviso","alerta","notificación","campana","recordatorio"],fr:["alerte","notification","cloche","rappel","avertissement"]}},
+  {n:"sports_soccer",e:"⚽",k:{pt:["futebol","bola","esporte","jogar","time"],en:["soccer","football","ball","sport","play","team"],es:["fútbol","pelota","deporte","jugar","equipo"],fr:["football","balle","sport","jouer","équipe"]}},
+  {n:"sports_basketball",e:"🏀",k:{pt:["basquete","bola","esporte","jogar","cesta"],en:["basketball","ball","sport","play","basket"],es:["baloncesto","pelota","deporte","jugar","canasta"],fr:["basketball","balle","sport","jouer","panier"]}},
+  {n:"sports_tennis",e:"🎾",k:{pt:["tenis","raquete","esporte","jogar","bola"],en:["tennis","racket","sport","play","ball"],es:["tenis","raqueta","deporte","jugar","pelota"],fr:["tennis","raquette","sport","jouer","balle"]}},
+  {n:"sports_volleyball",e:"🏐",k:{pt:["volei","bola","esporte","jogar","praia"],en:["volleyball","ball","sport","play","beach"],es:["voleibol","pelota","deporte","jugar","playa"],fr:["volleyball","balle","sport","jouer","plage"]}},
+  {n:"pool",e:"🏊",k:{pt:["natacao","nadar","piscina","agua","esporte"],en:["swimming","swim","pool","water","sport"],es:["natación","nadar","piscina","agua","deporte"],fr:["natation","nager","piscine","eau","sport"]}},
+  {n:"surfing",e:"🏄",k:{pt:["surf","onda","praia","esporte","mar"],en:["surfing","wave","beach","sport","sea"],es:["surf","ola","playa","deporte","mar"],fr:["surf","vague","plage","sport","mer"]}},
+  {n:"skateboarding",e:"🛹",k:{pt:["skate","patinete","esporte","rua","radical"],en:["skateboard","skate","sport","street","extreme"],es:["skateboard","patineta","deporte","calle","extremo"],fr:["skateboard","skate","sport","rue","extrême"]}},
+  {n:"fitness_center",e:"💪",k:{pt:["academia","musculacao","exercicio","treino","ginastica"],en:["gym","workout","exercise","training","fitness"],es:["gimnasio","musculación","ejercicio","entrenamiento"],fr:["salle de sport","musculation","exercice","entraînement"]}},
+  {n:"directions_bike",e:"🚲",k:{pt:["bicicleta","pedalar","esporte","andar","bike"],en:["bicycle","bike","cycle","sport","ride"],es:["bicicleta","pedalear","deporte","andar","bike"],fr:["vélo","bicyclette","pédaler","sport","rouler"]}},
+  {n:"hiking",e:"🥾",k:{pt:["caminhada","trilha","natureza","andar","montanha"],en:["hiking","trail","nature","walk","mountain"],es:["senderismo","sendero","naturaleza","caminar","montaña"],fr:["randonnée","sentier","nature","marcher","montagne"]}},
+  {n:"directions_run",e:"🏃",k:{pt:["correr","corrida","esporte","exercicio","rapido"],en:["run","running","sport","exercise","fast"],es:["correr","carrera","deporte","ejercicio","rápido"],fr:["courir","course","sport","exercice","rapide"]}},
+  {n:"directions_walk",e:"🚶",k:{pt:["andar","caminhar","passear","pe","passeio"],en:["walk","stroll","foot","pedestrian"],es:["caminar","pasear","pie","peatón"],fr:["marcher","se promener","pied","piéton"]}},
+  {n:"sports_martial_arts",e:"🥋",k:{pt:["luta","arte marcial","karate","esporte","judo"],en:["fight","martial arts","karate","sport","judo"],es:["lucha","artes marciales","karate","deporte","judo"],fr:["combat","arts martiaux","karaté","sport","judo"]}},
+  {n:"sports_gymnastics",e:"🤸",k:{pt:["ginastica","exercicio","esporte","treino","acrobatica"],en:["gymnastics","exercise","sport","training","acrobatics"],es:["gimnasia","ejercicio","deporte","entrenamiento","acrobacia"],fr:["gymnastique","exercice","sport","entraînement","acrobatie"]}},
+  {n:"kayaking",e:"🚣",k:{pt:["caiaque","remo","agua","esporte","rio"],en:["kayak","paddle","water","sport","river"],es:["kayak","remo","agua","deporte","río"],fr:["kayak","pagaie","eau","sport","rivière"]}},
+  {n:"scuba_diving",e:"🤿",k:{pt:["mergulho","mar","esporte","agua","submarino"],en:["diving","sea","sport","water","underwater"],es:["buceo","mar","deporte","agua","submarino"],fr:["plongée","mer","sport","eau","sous-marin"]}},
+  {n:"music_note",e:"🎵",k:{pt:["musica","som","ouvir","cantar","melodia"],en:["music","sound","listen","sing","melody"],es:["música","sonido","escuchar","cantar","melodía"],fr:["musique","son","écouter","chanter","mélodie"]}},
+  {n:"headphones",e:"🎧",k:{pt:["fone","ouvir","musica","headphone","auricular"],en:["headphones","listen","music","earphones"],es:["auriculares","escuchar","música","cascos"],fr:["casque","écouter","musique","écouteurs"]}},
+  {n:"mic",e:"🎤",k:{pt:["microfone","cantar","gravar","voz","karaoke"],en:["microphone","sing","record","voice","karaoke"],es:["micrófono","cantar","grabar","voz","karaoke"],fr:["microphone","chanter","enregistrer","voix","karaoké"]}},
+  {n:"piano",e:"🎹",k:{pt:["piano","teclado","instrumento","musica","tocar"],en:["piano","keyboard","instrument","music","play"],es:["piano","teclado","instrumento","música","tocar"],fr:["piano","clavier","instrument","musique","jouer"]}},
+  {n:"brush",e:"🖌️",k:{pt:["pincel","pintura","arte","desenhar","colorir"],en:["brush","paint","art","draw","color"],es:["pincel","pintura","arte","dibujar","colorear"],fr:["pinceau","peinture","art","dessiner","colorier"]}},
+  {n:"palette",e:"🎨",k:{pt:["cores","tinta","arte","pintura","colorir"],en:["colors","paint","art","painting","color"],es:["colores","pintura","arte","colorear"],fr:["couleurs","peinture","art","colorier"]}},
+  {n:"theater_comedy",e:"🎭",k:{pt:["teatro","mascara","comedia","drama","peça"],en:["theater","mask","comedy","drama","play"],es:["teatro","máscara","comedia","drama","obra"],fr:["théâtre","masque","comédie","drame","pièce"]}},
+  {n:"movie",e:"🎬",k:{pt:["filme","cinema","assistir","video","pipoca"],en:["movie","cinema","watch","video","popcorn"],es:["película","cine","ver","video","palomitas"],fr:["film","cinéma","regarder","vidéo","popcorn"]}},
+  {n:"tv",e:"📺",k:{pt:["televisao","assistir","programa","tela","tv"],en:["television","watch","program","screen","tv"],es:["televisión","ver","programa","pantalla","tv"],fr:["télévision","regarder","programme","écran","tv"]}},
+  {n:"photo_camera",e:"📷",k:{pt:["foto","camera","fotografar","imagem","tirar foto"],en:["photo","camera","photograph","image","take photo"],es:["foto","cámara","fotografiar","imagen","tomar foto"],fr:["photo","appareil","photographier","image","prendre photo"]}},
+  {n:"book",e:"📚",k:{pt:["livro","ler","leitura","estudar","historia"],en:["book","read","reading","study","story"],es:["libro","leer","lectura","estudiar","historia"],fr:["livre","lire","lecture","étudier","histoire"]}},
+  {n:"games",e:"🎮",k:{pt:["jogo","jogar","brincar","videogame","diversao"],en:["game","play","fun","videogame","entertainment"],es:["juego","jugar","diversión","videojuego"],fr:["jeu","jouer","amusement","jeu vidéo","divertissement"]}},
+  {n:"sports_esports",e:"🕹️",k:{pt:["videogame","controle","jogo","jogar","game"],en:["videogame","controller","game","play","gaming"],es:["videojuego","control","juego","jugar"],fr:["jeu vidéo","manette","jeu","jouer"]}},
+  {n:"toys",e:"🧸",k:{pt:["brinquedo","brincar","crianca","jogar","diversao"],en:["toy","play","child","game","fun"],es:["juguete","jugar","niño","diversión"],fr:["jouet","jouer","enfant","amusement"]}},
+  {n:"school",e:"🏫",k:{pt:["escola","estudar","aprender","educacao","colegio"],en:["school","study","learn","education","college"],es:["escuela","estudiar","aprender","educación","colegio"],fr:["école","étudier","apprendre","éducation","collège"]}},
+  {n:"abc",e:"🔤",k:{pt:["letra","alfabeto","ler","aprender","escrita"],en:["letter","alphabet","read","learn","writing"],es:["letra","alfabeto","leer","aprender","escritura"],fr:["lettre","alphabet","lire","apprendre","écriture"]}},
+  {n:"calculate",e:"🔢",k:{pt:["matematica","calcular","numero","conta","soma"],en:["math","calculate","number","count","sum"],es:["matemáticas","calcular","número","cuenta","suma"],fr:["mathématiques","calculer","nombre","compte","somme"]}},
+  {n:"science",e:"🔬",k:{pt:["ciencia","experimento","pesquisa","aprender","laboratorio"],en:["science","experiment","research","learn","laboratory"],es:["ciencia","experimento","investigación","aprender","laboratorio"],fr:["science","expérience","recherche","apprendre","laboratoire"]}},
+  {n:"backpack",e:"🎒",k:{pt:["mochila","escola","bolsa","carregar","aluno"],en:["backpack","school","bag","carry","student"],es:["mochila","escuela","bolsa","cargar","alumno"],fr:["sac à dos","école","sac","porter","élève"]}},
+  {n:"laptop",e:"💻",k:{pt:["computador","notebook","estudar","trabalhar","internet"],en:["computer","laptop","study","work","internet"],es:["computadora","laptop","estudiar","trabajar","internet"],fr:["ordinateur","portable","étudier","travailler","internet"]}},
+  {n:"home",e:"🏠",k:{pt:["casa","lar","inicio","morar","residencia"],en:["home","house","start","live","residence"],es:["casa","hogar","inicio","vivir","residencia"],fr:["maison","foyer","début","vivre","résidence"]}},
+  {n:"door_front",e:"🚪",k:{pt:["porta","entrada","sair","entrar","abrir"],en:["door","entrance","exit","enter","open"],es:["puerta","entrada","salir","entrar","abrir"],fr:["porte","entrée","sortir","entrer","ouvrir"]}},
+  {n:"kitchen",e:"🍳",k:{pt:["cozinha","cozinhar","casa","comida","panela"],en:["kitchen","cook","home","food","pot"],es:["cocina","cocinar","casa","comida","olla"],fr:["cuisine","cuisiner","maison","nourriture","casserole"]}},
+  {n:"chair",e:"🪑",k:{pt:["cadeira","sentar","mesa","sala","mobilia"],en:["chair","sit","table","room","furniture"],es:["silla","sentar","mesa","sala","mueble"],fr:["chaise","s\\",",",",",","]}},
+  {n:"local_laundry_service",e:"🧺",k:{pt:["lavanderia","lavar","roupa","maquina","limpar"],en:["laundry","wash","clothes","machine","clean"],es:["lavandería","lavar","ropa","máquina","limpiar"],fr:["lessive","laver","vêtements","machine","nettoyer"]}},
+  {n:"light",e:"💡",k:{pt:["luz","lampada","acender","iluminar","claridade"],en:["light","lamp","turn on","illuminate","bright"],es:["luz","lámpara","encender","iluminar","claridad"],fr:["lumière","lampe","allumer","illuminer","clarté"]}},
+  {n:"ac_unit",e:"❄️",k:{pt:["ar condicionado","frio","gelado","climatizar","fresco"],en:["air conditioning","cold","cool","climate","fresh"],es:["aire acondicionado","frío","fresco","clima"],fr:["climatisation","froid","frais","climat"]}},
+  {n:"outdoor_grill",e:"🔥",k:{pt:["churrasqueira","grelha","churrasco","carne","assar"],en:["barbecue","grill","bbq","meat","roast"],es:["parrilla","asado","barbacoa","carne","asar"],fr:["barbecue","gril","viande","griller"]}},
+  {n:"park",e:"🌳",k:{pt:["parque","natureza","arvore","passear","verde"],en:["park","nature","tree","walk","green"],es:["parque","naturaleza","árbol","pasear","verde"],fr:["parc","nature","arbre","se promener","vert"]}},
+  {n:"beach_access",e:"🏖️",k:{pt:["praia","mar","guarda sol","areia","verao"],en:["beach","sea","umbrella","sand","summer"],es:["playa","mar","parasol","arena","verano"],fr:["plage","mer","parasol","sable","été"]}},
+  {n:"waves",e:"🌊",k:{pt:["ondas","mar","praia","agua","oceano"],en:["waves","sea","beach","water","ocean"],es:["olas","mar","playa","agua","océano"],fr:["vagues","mer","plage","eau","océan"]}},
+  {n:"wb_sunny",e:"☀️",k:{pt:["sol","ensolarado","quente","verao","dia"],en:["sun","sunny","hot","summer","day"],es:["sol","soleado","caliente","verano","día"],fr:["soleil","ensoleillé","chaud","été","jour"]}},
+  {n:"cloud",e:"☁️",k:{pt:["nuvem","tempo","ceu","cinza","chuva"],en:["cloud","weather","sky","gray","rain"],es:["nube","tiempo","cielo","gris","lluvia"],fr:["nuage","météo","ciel","gris","pluie"]}},
+  {n:"umbrella",e:"☂️",k:{pt:["guarda chuva","chuva","molhar","proteger","chovendo"],en:["umbrella","rain","wet","protect","raining"],es:["paraguas","lluvia","mojar","proteger","lloviendo"],fr:["parapluie","pluie","mouiller","protéger","pleuvoir"]}},
+  {n:"local_florist",e:"🌸",k:{pt:["flor","rosa","presente","jardim","bouquet"],en:["flower","rose","gift","garden","bouquet"],es:["flor","rosa","regalo","jardín","ramo"],fr:["fleur","rose","cadeau","jardin","bouquet"]}},
+  {n:"pets",e:"🐾",k:{pt:["animal","cachorro","gato","estimacao","pet"],en:["pet","dog","cat","animal","companion"],es:["mascota","perro","gato","animal"],fr:["animal","chien","chat","compagnie"]}},
+  {n:"emoji_nature",e:"🦋",k:{pt:["natureza","flor","planta","verde","borboleta"],en:["nature","flower","plant","green","butterfly"],es:["naturaleza","flor","planta","verde","mariposa"],fr:["nature","fleur","plante","vert","papillon"]}},
+  {n:"directions_car",e:"🚗",k:{pt:["carro","veiculo","dirigir","transporte","automovel"],en:["car","vehicle","drive","transport","automobile"],es:["carro","vehículo","manejar","transporte","automóvil"],fr:["voiture","véhicule","conduire","transport","automobile"]}},
+  {n:"local_taxi",e:"🚕",k:{pt:["taxi","carro","transporte","uber","corrida"],en:["taxi","car","transport","uber","ride"],es:["taxi","carro","transporte","uber","carrera"],fr:["taxi","voiture","transport","uber","course"]}},
+  {n:"directions_bus",e:"🚌",k:{pt:["onibus","coletivo","transporte","passagem","publico"],en:["bus","public transport","ticket","commute"],es:["autobús","transporte","boleto","público"],fr:["bus","transport","billet","public"]}},
+  {n:"train",e:"🚆",k:{pt:["trem","metro","transporte","trilho","estacao"],en:["train","metro","transport","rail","station"],es:["tren","metro","transporte","riel","estación"],fr:["train","métro","transport","rail","gare"]}},
+  {n:"flight",e:"✈️",k:{pt:["aviao","voo","viajar","aeroporto","voar"],en:["airplane","flight","travel","airport","fly"],es:["avión","vuelo","viajar","aeropuerto","volar"],fr:["avion","vol","voyager","aéroport","voler"]}},
+  {n:"two_wheeler",e:"🏍️",k:{pt:["moto","motocicleta","transporte","veiculo","andar"],en:["motorcycle","bike","transport","vehicle","ride"],es:["moto","motocicleta","transporte","vehículo"],fr:["moto","motocyclette","transport","véhicule"]}},
+  {n:"emergency",e:"🚑",k:{pt:["ambulancia","socorro","emergencia","urgente","saude"],en:["ambulance","rescue","emergency","urgent","health"],es:["ambulancia","socorro","emergencia","urgente","salud"],fr:["ambulance","secours","urgence","urgent","santé"]}},
+  {n:"local_police",e:"🚔",k:{pt:["policia","seguranca","emergencia","ajuda","socorro"],en:["police","security","emergency","help","rescue"],es:["policía","seguridad","emergencia","ayuda","socorro"],fr:["police","sécurité","urgence","aide","secours"]}},
+  {n:"location_on",e:"📍",k:{pt:["localizacao","onde","mapa","aqui","lugar"],en:["location","where","map","here","place"],es:["ubicación","dónde","mapa","aquí","lugar"],fr:["emplacement","où","carte","ici","lieu"]}},
+  {n:"store",e:"🏪",k:{pt:["loja","comprar","mercado","shopping","comercio"],en:["store","buy","market","shopping","commerce"],es:["tienda","comprar","mercado","shopping","comercio"],fr:["magasin","acheter","marché","shopping","commerce"]}},
+  {n:"shopping_cart",e:"🛒",k:{pt:["compras","carrinho","supermercado","comprar","feira"],en:["shopping","cart","supermarket","buy","market"],es:["compras","carrito","supermercado","comprar"],fr:["courses","chariot","supermarché","acheter"]}},
+  {n:"church",e:"⛪",k:{pt:["igreja","missa","religiao","oracao","fé","rezar"],en:["church","mass","religion","prayer","faith","pray"],es:["iglesia","misa","religión","oración","fe","rezar"],fr:["église","messe","religion","prière","foi","prier"]}},
+  {n:"museum",e:"🏛️",k:{pt:["museu","arte","cultura","visitar","historia"],en:["museum","art","culture","visit","history"],es:["museo","arte","cultura","visitar","historia"],fr:["musée","art","culture","visiter","histoire"]}},
+  {n:"hotel",e:"🏨",k:{pt:["hotel","hospedar","dormir","viagem","quarto"],en:["hotel","stay","sleep","travel","room"],es:["hotel","hospedarse","dormir","viaje","habitación"],fr:["hôtel","séjour","dormir","voyage","chambre"]}},
+  {n:"stadium",e:"🏟️",k:{pt:["estadio","esporte","jogo","futebol","arena"],en:["stadium","sport","game","soccer","arena"],es:["estadio","deporte","juego","fútbol","arena"],fr:["stade","sport","match","football","arène"]}},
+  {n:"schedule",e:"⏰",k:{pt:["hora","relogio","tempo","quando","horario"],en:["time","clock","when","schedule","hour"],es:["hora","reloj","cuando","horario"],fr:["heure","horloge","quand","horaire"]}},
+  {n:"today",e:"📅",k:{pt:["hoje","dia","calendario","data","agora"],en:["today","day","calendar","date","now"],es:["hoy","día","calendario","fecha","ahora"],fr:["aujourd\\",",",",",",",","]}},
+  {n:"event",e:"📆",k:{pt:["evento","calendario","data","compromisso","atividade"],en:["event","calendar","date","appointment","activity"],es:["evento","calendario","fecha","cita","actividad"],fr:["événement","calendrier","date","rendez-vous","activité"]}},
+  {n:"celebration",e:"🎉",k:{pt:["festa","comemoracao","aniversario","feliz","parabens"],en:["party","celebration","birthday","happy","congratulations"],es:["fiesta","celebración","cumpleaños","feliz","felicitaciones"],fr:["fête","célébration","anniversaire","heureux","félicitations"]}},
+  {n:"card_giftcard",e:"🎁",k:{pt:["presente","gift","dar","ganhar","premio","aniversario"],en:["gift","present","give","receive","prize","birthday"],es:["regalo","dar","recibir","premio","cumpleaños"],fr:["cadeau","donner","recevoir","prix","anniversaire"]}},
+  {n:"check",e:"✅",k:{pt:["sim","ok","feito","concluir","correto","certo"],en:["yes","ok","done","correct","right","check"],es:["sí","ok","hecho","correcto","bien"],fr:["oui","ok","fait","correct","bien"]}},
+  {n:"close",e:"❌",k:{pt:["nao","fechar","errado","cancelar","recusar"],en:["no","close","wrong","cancel","refuse"],es:["no","cerrar","incorrecto","cancelar","rechazar"],fr:["non","fermer","incorrect","annuler","refuser"]}},
+  {n:"done",e:"✔️",k:{pt:["pronto","terminei","concluido","feito","acabei"],en:["done","finished","completed","ready"],es:["listo","terminado","completado","hecho"],fr:["terminé","fini","complété","prêt"]}},
+  {n:"stop",e:"⛔",k:{pt:["parar","stop","nao","chega","fim"],en:["stop","halt","no","end","finish"],es:["parar","detener","no","fin"],fr:["arrêter","stop","non","fin"]}},
+  {n:"play_arrow",e:"▶️",k:{pt:["comecar","iniciar","play","ir","iniciar"],en:["start","begin","play","go","initiate"],es:["empezar","comenzar","play","ir","iniciar"],fr:["commencer","débuter","play","aller","initier"]}},
+  {n:"pan_tool",e:"✋",k:{pt:["parar","esperar","nao","aguardar","mao"],en:["wait","stop","hand","hold on","pause"],es:["esperar","detener","mano","aguardar"],fr:["attendre","arrêter","main","patienter"]}},
+  {n:"search",e:"🔍",k:{pt:["buscar","procurar","encontrar","pesquisar","lupa"],en:["search","find","look","magnify"],es:["buscar","encontrar","buscar","lupa"],fr:["chercher","trouver","rechercher","loupe"]}},
+  {n:"share",e:"📤",k:{pt:["compartilhar","enviar","mostrar","dividir"],en:["share","send","show","divide"],es:["compartir","enviar","mostrar","dividir"],fr:["partager","envoyer","montrer","diviser"]}},
+  {n:"lock",e:"🔒",k:{pt:["travar","fechar","seguro","proteger","senha"],en:["lock","close","secure","protect","password"],es:["bloquear","cerrar","seguro","proteger","contraseña"],fr:["verrouiller","fermer","sécurisé","protéger","mot de passe"]}},
+  {n:"lock_open",e:"🔓",k:{pt:["abrir","destrancar","acesso","livre","entrar"],en:["unlock","open","access","free","enter"],es:["desbloquear","abrir","acceso","libre","entrar"],fr:["déverrouiller","ouvrir","accès","libre","entrer"]}},
+  {n:"checkroom",e:"👔",k:{pt:["roupa","vestiario","guardar","cabide","vestir"],en:["clothes","wardrobe","store","hanger","dress"],es:["ropa","vestuario","guardar","perchero","vestir"],fr:["vêtements","vestiaire","ranger","cintre","habiller"]}},
+  {n:"style",e:"👗",k:{pt:["moda","estilo","roupa","aparencia","look"],en:["fashion","style","clothes","appearance","look"],es:["moda","estilo","ropa","apariencia","look"],fr:["mode","style","vêtements","apparence","look"]}},
+  {n:"face_retouching_natural",e:"🧑",k:{pt:["maquiagem","beleza","rosto","aparencia","make"],en:["makeup","beauty","face","appearance","cosmetics"],es:["maquillaje","belleza","rostro","apariencia","cosméticos"],fr:["maquillage","beauté","visage","apparence","cosmétiques"]}},
+  {n:"content_cut",e:"✂️",k:{pt:["cortar","cabelo","tesoura","cabeleireiro","corte"],en:["cut","hair","scissors","barber","haircut"],es:["cortar","cabello","tijeras","peluquero","corte"],fr:["couper","cheveux","ciseaux","coiffeur","coupe"]}},
+  {n:"arrow_upward",e:"⬆️",k:{pt:["cima","subir","acima","para cima","norte"],en:["up","above","raise","north"],es:["arriba","subir","encima","norte"],fr:["haut","monter","au-dessus","nord"]}},
+  {n:"arrow_downward",e:"⬇️",k:{pt:["baixo","descer","abaixo","para baixo","sul"],en:["down","below","lower","south"],es:["abajo","bajar","debajo","sur"],fr:["bas","descendre","en-dessous","sud"]}},
+  {n:"arrow_forward",e:"➡️",k:{pt:["frente","proximo","avancar","ir","continuar"],en:["forward","next","advance","go","continue"],es:["adelante","siguiente","avanzar","ir","continuar"],fr:["avant","suivant","avancer","aller","continuer"]}},
+  {n:"arrow_back",e:"⬅️",k:{pt:["voltar","anterior","atras","retornar","regresso"],en:["back","return","previous","go back"],es:["volver","anterior","regresar","atrás"],fr:["retour","précédent","revenir","arrière"]}},
+  {n:"near_me",e:"📌",k:{pt:["aqui","perto","local","onde estou","minha localizacao"],en:["here","nearby","location","where I am","my location"],es:["aquí","cerca","local","donde estoy","mi ubicación"],fr:["ici","près","local","où je suis","ma position"]}},
+  {n:"volunteer_activism",e:"🤝",k:{pt:["ajudar","cuidar","carinho","generosidade","doar"],en:["help","care","generosity","donate","give"],es:["ayudar","cuidar","generosidad","donar","dar"],fr:["aider","soin","générosité","donner","offrir"]}},
+  {n:"reduce_capacity",e:"🚷",k:{pt:["distancia","separado","longe","espaco","afastado"],en:["distance","separate","far","space","apart"],es:["distancia","separado","lejos","espacio","alejado"],fr:["distance","séparé","loin","espace","éloigné"]}},
+  {n:"escalator_warning",e:"🧑‍🦽",k:{pt:["crianca","adulto","pai","filho","junto","familia"],en:["child","adult","parent","together","family"],es:["niño","adulto","padre","hijo","juntos","familia"],fr:["enfant","adulte","parent","ensemble","famille"]}},
+  {n:"looks_one",e:"1️⃣",k:{pt:["um","primeiro","numero","1","inicial"],en:["one","first","number","1","initial"],es:["uno","primero","número","1","inicial"],fr:["un","premier","nombre","1","initial"]}},
+  {n:"looks_two",e:"2️⃣",k:{pt:["dois","segundo","numero","2","par"],en:["two","second","number","2","pair"],es:["dos","segundo","número","2","par"],fr:["deux","deuxième","nombre","2","paire"]}},
+  {n:"looks_3",e:"3️⃣",k:{pt:["tres","terceiro","numero","3"],en:["three","third","number","3"],es:["tres","tercero","número","3"],fr:["trois","troisième","nombre","3"]}},
+  {n:"looks_4",e:"4️⃣",k:{pt:["quatro","numero","4","quarto"],en:["four","number","4","fourth"],es:["cuatro","número","4","cuarto"],fr:["quatre","nombre","4","quatrième"]}},
+  {n:"looks_5",e:"5️⃣",k:{pt:["cinco","numero","5","quinto"],en:["five","number","5","fifth"],es:["cinco","número","5","quinto"],fr:["cinq","nombre","5","cinquième"]}},
+  {n:"star",e:"⭐",k:{pt:["estrela","favorito","especial","destaque","importante"],en:["star","favorite","special","highlight","important"],es:["estrella","favorito","especial","destacado","importante"],fr:["étoile","favori","spécial","important"]}},
+  {n:"emoji_emotions",e:"😀",k:{pt:["emocao","sentimento","expressao","rosto","face"],en:["emotion","feeling","expression","face"],es:["emoción","sentimiento","expresión","rostro"],fr:["émotion","sentiment","expression","visage"]}},
+  {n:"emoji_people",e:"🧍",k:{pt:["pessoa","aceno","ola","social","cumprimento"],en:["person","wave","hello","social","greeting"],es:["persona","saludo","hola","social"],fr:["personne","signe","bonjour","social","salutation"]}},
+  {n:"grid_view",e:"⊞",k:{pt:["grade","quadrado","organizar","layout"],en:["grid","square","organize","layout"],es:["cuadrícula","cuadrado","organizar","diseño"],fr:["grille","carré","organiser","disposition"]}},
+  {n:"nightlight",e:"🌙",k:{pt:["noite","escuro","lua","dormir","tarde"],en:["night","dark","moon","sleep","evening"],es:["noche","oscuro","luna","dormir","tarde"],fr:["nuit","sombre","lune","dormir","soir"]}},
+  {n:"wb_twilight",e:"🌆",k:{pt:["tarde","entardecer","fim de tarde","por do sol"],en:["afternoon","evening","sunset","dusk"],es:["tarde","atardecer","puesta de sol"],fr:["après-midi","soir","coucher de soleil","crépuscule"]}},
+  {n:"sports_golf",e:"⛳",k:{pt:["golfe","taco","esporte","bola","campo"],en:["golf","club","sport","ball","course"],es:["golf","palo","deporte","pelota","campo"],fr:["golf","club","sport","balle","terrain"]}},
+  {n:"rowing",e:"🚣",k:{pt:["remo","barco","agua","esporte","remar"],en:["rowing","boat","water","sport","paddle"],es:["remo","bote","agua","deporte","remar"],fr:["aviron","bateau","eau","sport","ramer"]}},
+  {n:"directions_boat",e:"🚤",k:{pt:["barco","balsa","agua","transporte","navegar"],en:["boat","ferry","water","transport","sail"],es:["barco","balsa","agua","transporte","navegar"],fr:["bateau","ferry","eau","transport","naviguer"]}},
+  {n:"local_movies",e:"🎬",k:{pt:["cinema","filme","assistir","pipoca","tela"],en:["cinema","movie","watch","popcorn","screen"],es:["cine","película","ver","palomitas","pantalla"],fr:["cinéma","film","regarder","popcorn","écran"]}},
+  {n:"auto_stories",e:"📖",k:{pt:["livro","historia","ler","conto","narrativa"],en:["book","story","read","tale","narrative"],es:["libro","historia","leer","cuento","narrativa"],fr:["livre","histoire","lire","conte","récit"]}},
+  {n:"translate",e:"🌐",k:{pt:["idioma","lingua","traducao","aprender","falar"],en:["language","translate","learn","speak"],es:["idioma","lengua","traducción","aprender","hablar"],fr:["langue","traduction","apprendre","parler"]}},
+  {n:"face",e:"😶",k:{pt:["rosto","cara","face","expressao","pessoa"],en:["face","expression","person","look"],es:["rostro","cara","expresión","persona"],fr:["visage","expression","personne","apparence"]}},
+  {n:"eco",e:"🌿",k:{pt:["ecologia","natureza","verde","sustentavel","meio ambiente"],en:["ecology","nature","green","sustainable","environment"],es:["ecología","naturaleza","verde","sostenible","medio ambiente"],fr:["écologie","nature","vert","durable","environnement"]}},
+  {n:"grass",e:"🌱",k:{pt:["grama","jardim","verde","natureza","quintal"],en:["grass","garden","green","nature","yard"],es:["pasto","jardín","verde","naturaleza","patio"],fr:["herbe","jardin","vert","nature","cour"]}},
+  {n:"forest",e:"🌲",k:{pt:["floresta","mata","natureza","arvore","verde"],en:["forest","woods","nature","tree","green"],es:["bosque","selva","naturaleza","árbol","verde"],fr:["forêt","bois","nature","arbre","vert"]}},
+  {n:"nordic_walking",e:"🚶",k:{pt:["caminhada","bastao","exercicio","andar","passear"],en:["walking","hike","exercise","walk","stroll"],es:["caminata","bastón","ejercicio","caminar","pasear"],fr:["marche","bâton","exercice","marcher","se promener"]}},
+  {n:"local_mall",e:"🏬",k:{pt:["shopping","centro comercial","loja","comprar","mall"],en:["mall","shopping center","store","buy"],es:["centro comercial","tiendas","comprar","mall"],fr:["centre commercial","magasins","acheter","mall"]}},
+  {n:"shopping_bag",e:"🛍️",k:{pt:["sacola","compras","loja","comprar","bolsa"],en:["bag","shopping","store","buy","carry"],es:["bolsa","compras","tienda","comprar","llevar"],fr:["sac","courses","magasin","acheter","porter"]}},
+  {n:"landscape",e:"🏞️",k:{pt:["paisagem","montanha","natureza","campo","horizonte"],en:["landscape","mountain","nature","field","horizon"],es:["paisaje","montaña","naturaleza","campo","horizonte"],fr:["paysage","montagne","nature","champ","horizon"]}},
+  {n:"hot_tub",e:"🛁",k:{pt:["jacuzzi","spa","relaxar","agua quente","banheira"],en:["jacuzzi","spa","relax","hot water","tub"],es:["jacuzzi","spa","relajar","agua caliente","bañera"],fr:["jacuzzi","spa","relaxer","eau chaude","baignoire"]}},
+  {n:"sports_football",e:"🏈",k:{pt:["futebol americano","bola","esporte","nfl"],en:["american football","ball","sport","nfl"],es:["fútbol americano","pelota","deporte","nfl"],fr:["football américain","balle","sport","nfl"]}},
+  {n:"blender",e:"🧃",k:{pt:["liquidificador","bater","cozinha","suco","vitamina"],en:["blender","mix","kitchen","juice","smoothie"],es:["licuadora","batir","cocina","jugo","batido"],fr:["mixeur","mélanger","cuisine","jus","smoothie"]}},
+  {n:"microwave",e:"🍲",k:{pt:["microondas","cozinhar","aquecer","comida","esquentar"],en:["microwave","cook","heat","food","warm"],es:["microondas","cocinar","calentar","comida"],fr:["micro-ondes","cuisiner","chauffer","nourriture"]}},
+  {n:"yard",e:"🌿",k:{pt:["quintal","jardim","area","casa","externo"],en:["yard","garden","area","home","outdoor"],es:["patio","jardín","área","casa","exterior"],fr:["cour","jardin","zone","maison","extérieur"]}},
+  {n:"air",e:"💨",k:{pt:["ar","vento","fresco","ventilador","brisa"],en:["air","wind","fresh","fan","breeze"],es:["aire","viento","fresco","ventilador","brisa"],fr:["air","vent","frais","ventilateur","brise"]}},
+  {n:"thunderstorm",e:"⛈️",k:{pt:["tempestade","chuva","raio","trovao","temporal"],en:["storm","rain","lightning","thunder","weather"],es:["tormenta","lluvia","rayo","trueno","temporal"],fr:["tempête","pluie","éclair","tonnerre","orage"]}},
+  {n:"energy_savings_leaf",e:"🍃",k:{pt:["folha","planta","natureza","verde","arvore"],en:["leaf","plant","nature","green","tree"],es:["hoja","planta","naturaleza","verde","árbol"],fr:["feuille","plante","nature","vert","arbre"]}},
+  {n:"health_and_safety",e:"🩹",k:{pt:["saude","seguranca","protecao","cuidado","bem estar"],en:["safety","health","protection","care","wellbeing"],es:["seguridad","salud","protección","cuidado","bienestar"],fr:["sécurité","santé","protection","soin","bien-être"]}},
+  {n:"coronavirus",e:"🦠",k:{pt:["doente","virus","gripe","mal","contagio"],en:["virus","sick","flu","ill","contagion"],es:["virus","enfermo","gripe","mal","contagio"],fr:["virus","malade","grippe","mal","contagion"]}},
+  {n:"sailing",e:"⛵",k:{pt:["vela","barco","mar","esporte","navegar"],en:["sailing","boat","sea","sport","navigate"],es:["vela","barco","mar","deporte","navegar"],fr:["voile","bateau","mer","sport","naviguer"]}},
+  {n:"snowboarding",e:"🏂",k:{pt:["snowboard","neve","esporte","frio","inverno"],en:["snowboard","snow","sport","cold","winter"],es:["snowboard","nieve","deporte","frío","invierno"],fr:["snowboard","neige","sport","froid","hiver"]}},
+  {n:"downhill_skiing",e:"⛷️",k:{pt:["esqui","neve","esporte","descida","inverno"],en:["skiing","snow","sport","downhill","winter"],es:["esquí","nieve","deporte","descenso","invierno"],fr:["ski","neige","sport","descente","hiver"]}},
+  {n:"paragliding",e:"🪂",k:{pt:["parapente","voar","esporte","aventura","radical"],en:["paragliding","fly","sport","adventure","extreme"],es:["parapente","volar","deporte","aventura","extremo"],fr:["parapente","voler","sport","aventure","extrême"]}},
+  {n:"sports_baseball",e:"⚾",k:{pt:["beisebol","bola","esporte","taco","rebater"],en:["baseball","ball","sport","bat","hit"],es:["béisbol","pelota","deporte","bate","golpear"],fr:["baseball","balle","sport","batte","frapper"]}},
+  {n:"sports_hockey",e:"🏒",k:{pt:["hockey","gelo","esporte","taco","disco"],en:["hockey","ice","sport","stick","puck"],es:["hockey","hielo","deporte","palo","disco"],fr:["hockey","glace","sport","crosse","rondelle"]}},
+  {n:"casino",e:"🎲",k:{pt:["jogo","carta","dados","brincar","baralho"],en:["game","card","dice","play","deck"],es:["juego","carta","dados","jugar","baraja"],fr:["jeu","carte","dés","jouer","jeu de cartes"]}},
+  {n:"extension",e:"🧩",k:{pt:["quebra cabeca","montar","puzzle","brincar","desafio"],en:["puzzle","assemble","play","challenge","piece"],es:["rompecabezas","montar","puzzle","jugar","desafío"],fr:["puzzle","assembler","jouer","défi","pièce"]}},
+  {n:"queue_music",e:"🎶",k:{pt:["playlist","musica","lista","ouvir","selecao"],en:["playlist","music","list","listen","selection"],es:["lista de reproducción","música","lista","escuchar"],fr:["playlist","musique","liste","écouter","sélection"]}},
+  {n:"color_lens",e:"🎨",k:{pt:["arte","cor","pintura","criativo","criar"],en:["art","color","paint","creative","create"],es:["arte","color","pintura","creativo","crear"],fr:["art","couleur","peinture","créatif","créer"]}},
+  {n:"videocam",e:"🎥",k:{pt:["video","gravar","camera","filmagem","assistir"],en:["video","record","camera","film","watch"],es:["video","grabar","cámara","filmación","ver"],fr:["vidéo","enregistrer","caméra","film","regarder"]}},
+  {n:"library_books",e:"📚",k:{pt:["biblioteca","livro","ler","estudar","pesquisa"],en:["library","book","read","study","research"],es:["biblioteca","libro","leer","estudiar","investigación"],fr:["bibliothèque","livre","lire","étudier","recherche"]}},
+  {n:"history_edu",e:"📜",k:{pt:["historia","aprender","escola","passado","estudar"],en:["history","learn","school","past","study"],es:["historia","aprender","escuela","pasado","estudiar"],fr:["histoire","apprendre","école","passé","étudier"]}},
+  {n:"mail",e:"✉️",k:{pt:["email","carta","mensagem","correio","enviar"],en:["email","letter","message","mail","send"],es:["correo","carta","mensaje","email","enviar"],fr:["email","lettre","message","courrier","envoyer"]}},
+  {n:"call",e:"📞",k:{pt:["ligar","telefonar","chamar","telefone","contato"],en:["call","phone","contact","ring"],es:["llamar","telefonear","contacto","ring"],fr:["appeler","téléphoner","contact","sonner"]}},
+  {n:"social_distance",e:"🧍‍♂️🧍‍♀️",k:{pt:["distancia","separado","longe","espaco","social"],en:["distance","separate","far","space","social"],es:["distancia","separado","lejos","espacio","social"],fr:["distance","séparé","loin","espace","social"]}},
+  {n:"supervisor_account",e:"🧑‍💼",k:{pt:["responsavel","adulto","cuidador","tutor","guardiao"],en:["guardian","adult","caregiver","tutor","responsible"],es:["responsable","adulto","cuidador","tutor","guardián"],fr:["responsable","adulte","soignant","tuteur","gardien"]}},
+  {n:"redeem",e:"🎟️",k:{pt:["presente","brinde","ganhar","premio","recompensa"],en:["reward","gift","win","prize","bonus"],es:["premio","regalo","ganar","recompensa"],fr:["récompense","cadeau","gagner","prix","bonus"]}},
 ];
 
 const iconEmoji = name => (ICONS.find(i=>i.n===name)||{e:'📋'}).e;
@@ -529,9 +687,14 @@ function ColorPicker({ value, onChange }) {
   ))}</div>;
 }
 
-function IconPicker({ value, onChange, t }) {
+function IconPicker({ value, onChange, t, lang }) {
   const [q,setQ] = useState('');
-  const filtered = q ? ICONS.filter(i=>i.n.includes(q.toLowerCase())||i.e.includes(q)) : ICONS;
+  const query = q.trim().toLowerCase();
+  const filtered = query ? ICONS.filter(i => {
+    if (i.n.replace(/_/g,' ').includes(query)) return true;
+    const kws = i.k[lang] || i.k.en || [];
+    return kws.some(kw => kw.toLowerCase().includes(query));
+  }) : ICONS;
   return <>
     <input className="icon-search" placeholder={t?t.searchIcon:'Buscar ícone...'} value={q} onChange={e=>setQ(e.target.value)} />
     <div className="icon-grid">{filtered.map(i=>(
@@ -577,7 +740,7 @@ function ImageUpload({ value, onChange, userId, requestCrop, t }) {
   );
 }
 
-function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, insideSubsection, t }) {
+function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, insideSubsection, t, lang }) {
   const [name, setName] = useState(card?.name||'');
   const [voc, setVoc] = useState(card?.vocalization||'');
   const [speakImm, setSpeakImm] = useState(card?.speak_immediately||false);
@@ -635,7 +798,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
               <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
               <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
           {/* Toggle subseção - só aparece quando não estiver dentro de uma subseção */}
           {!insideSubsection && (
@@ -659,7 +822,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
   );
 }
 
-function SectionModal({ section, onSave, onClose, userId, requestCrop, t }) {
+function SectionModal({ section, onSave, onClose, userId, requestCrop, t, lang }) {
   const [name, setName] = useState(section?.name||'');
   const [color, setColor] = useState(section?.background_color||DEFAULT_COLOR);
   const [icon, setIcon] = useState(section?.icon_name||'grid_view');
@@ -703,7 +866,7 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t }) {
               <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
               <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
         </div>
         <div className="modal-footer">
@@ -1063,8 +1226,8 @@ function App() {
         )}
       </main>
 
-      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} t={t} />}
-      {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} t={t} />}
+      {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} t={t} lang={lang} />}
+      {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} t={t} lang={lang} />}
       {deleteConfirm&&<DeleteConfirm
         title={deleteConfirm.type==='section'?t.deleteSection:t.deleteCard}
         msg={deleteConfirm.type==='section'?t.confirmDeleteSection(deleteConfirm.item.name):t.confirmDeleteCard(deleteConfirm.item.name)}
