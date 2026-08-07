@@ -755,15 +755,43 @@ function App() {
   const [dragCard, setDragCard] = useState(null);
   const { requestCrop, CropUI } = useCrop(t);
 
+  // Ref para saber se algum modal está aberto no momento (evita reset de estado
+  // quando a aba volta a ficar visível e o Supabase dispara TOKEN_REFRESHED)
+  const modalOpenRef = useRef(false);
+  useEffect(() => {
+    modalOpenRef.current = !!(cardModal || sectionModal || deleteConfirm);
+  }, [cardModal, sectionModal, deleteConfirm]);
+
   function showToast(msg, type='success') { setToast({msg,type,key:Date.now()}); }
 
   useEffect(() => {
     sb.auth.getSession().then(({data:{session}}) => { setSession(session); setLoading(false); });
-    const {data:{subscription}} = sb.auth.onAuthStateChange((_,s)=>setSession(s));
+    // Só reagimos a eventos que realmente mudam quem está logado.
+    // TOKEN_REFRESHED dispara toda vez que a aba volta a ficar visível e não
+    // deve derrubar o estado de navegação/edição do usuário.
+    const {data:{subscription}} = sb.auth.onAuthStateChange((event, s) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        setSession(s);
+      } else if (event === 'TOKEN_REFRESHED') {
+        // Atualiza a sessão silenciosamente (token novo) sem disparar reload de dados
+        setSession(prev => prev ? { ...prev, ...s } : s);
+      }
+    });
     return ()=>subscription.unsubscribe();
   }, []);
 
-  useEffect(()=>{ if(session) loadSections(); },[session]);
+  // Dispara loadSections apenas quando o USUÁRIO logado muda de fato
+  // (login/logout), não a cada refresh de token / troca de aba.
+  const loadedUserIdRef = useRef(null);
+  useEffect(() => {
+    const uid = session?.user?.id || null;
+    if (uid && uid !== loadedUserIdRef.current) {
+      loadedUserIdRef.current = uid;
+      loadSections();
+    } else if (!uid) {
+      loadedUserIdRef.current = null;
+    }
+  }, [session?.user?.id]);
 
   async function login() {
     setAuthError(''); setAuthLoading(true);
@@ -774,7 +802,7 @@ function App() {
 
   async function logout() {
     await sb.auth.signOut();
-    setSections([]); setCards([]); setSelectedSection(null);
+    setSections([]); setCards([]); setSelectedSection(null); setActiveSubsection(null);
   }
 
   async function loadSections() {
