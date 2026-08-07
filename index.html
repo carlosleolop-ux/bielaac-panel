@@ -806,7 +806,10 @@ function App() {
   // ─── SECTION CRUD ────
   async function saveSection(data) {
     if(sectionModal==='new') {
-      const {data:newS,error} = await sb.from('sections').insert({...data,user_id:session.user.id,position:sections.length}).select().single();
+      const {data:existing} = await sb.from('sections').select('position')
+        .eq('user_id', session.user.id).order('position', {ascending:false}).limit(1);
+      const nextPos = existing && existing.length > 0 ? existing[0].position + 1 : 0;
+      const {data:newS,error} = await sb.from('sections').insert({...data,user_id:session.user.id,position:nextPos}).select().single();
       if(error){showToast(t.errorCreate,'error');return;}
       setSections(p=>[...p,newS]); setSelectedSection(newS); setCards([]); showToast(t.sectionCreated);
     } else {
@@ -831,11 +834,15 @@ function App() {
   // ─── CARD CRUD ────
   async function saveCard(data) {
     if(cardModal==='new') {
+      // Busca posição máxima atual no banco para evitar conflito
+      const {data:existing} = await sb.from('cards').select('position')
+        .eq('section_id', selectedSection.id).order('position', {ascending:false}).limit(1);
+      const nextPos = existing && existing.length > 0 ? existing[0].position + 1 : 0;
       const insertData = {
         ...data,
         user_id: session.user.id,
         section_id: selectedSection.id,
-        position: cards.length,
+        position: nextPos,
         parent_card_id: activeSubsection ? activeSubsection.id : null,
       };
       const {data:newC,error} = await sb.from('cards').insert(insertData).select().single();
