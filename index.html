@@ -491,13 +491,9 @@ function storagePathFromUrl(url) {
 
 async function deleteStorageFile(url) {
   const path = storagePathFromUrl(url);
-  console.log('[DEBUG deleteStorageFile] url:', url, '→ path:', path);
   if (!path) return;
-  try {
-    const result = await sb.storage.from(BUCKET).remove([path]);
-    console.log('[DEBUG deleteStorageFile] resultado:', result);
-  }
-  catch (e) { console.log('[DEBUG deleteStorageFile] ERRO:', e); }
+  try { await sb.storage.from(BUCKET).remove([path]); }
+  catch (e) { /* não bloqueia a UI — só deixa uma limpeza manual pra depois */ }
 }
 
 const COLORS = [
@@ -888,12 +884,10 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
 
   async function cleanupOrphans(finalImagePath) {
     const toDelete = new Set();
-    console.log('[DEBUG CardModal.cleanupOrphans] initial:', initialImagePath.current, '| final:', finalImagePath, '| uploadedThisSession:', uploadedThisSession.current);
     if (initialImagePath.current && initialImagePath.current !== finalImagePath) {
       toDelete.add(initialImagePath.current);
     }
     uploadedThisSession.current.forEach(u => { if (u !== finalImagePath) toDelete.add(u); });
-    console.log('[DEBUG CardModal.cleanupOrphans] toDelete:', [...toDelete]);
     for (const url of toDelete) await deleteStorageFile(url);
   }
 
@@ -904,7 +898,6 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
     const ok = await onSave({ name:name.trim().toUpperCase(), vocalization:voc.trim()||null, speak_immediately:speakImm,
       background_color:color, icon_name:tab==='icon'?icon:null, image_path:finalImagePath,
       type: isSubsection ? 'subsection' : 'normal' });
-    console.log('[DEBUG CardModal.save] ok:', ok, '| finalImagePath:', finalImagePath);
     if (ok) await cleanupOrphans(finalImagePath);
     setSaving(false);
   }
@@ -997,12 +990,10 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t, lang }
 
   async function cleanupOrphans(finalImagePath) {
     const toDelete = new Set();
-    console.log('[DEBUG SectionModal.cleanupOrphans] initial:', initialImagePath.current, '| final:', finalImagePath, '| uploadedThisSession:', uploadedThisSession.current);
     if (initialImagePath.current && initialImagePath.current !== finalImagePath) {
       toDelete.add(initialImagePath.current);
     }
     uploadedThisSession.current.forEach(u => { if (u !== finalImagePath) toDelete.add(u); });
-    console.log('[DEBUG SectionModal.cleanupOrphans] toDelete:', [...toDelete]);
     for (const url of toDelete) await deleteStorageFile(url);
   }
 
@@ -1012,7 +1003,6 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t, lang }
     const finalImagePath = tab==='image' ? (imgUrl||null) : null;
     const ok = await onSave({ name:name.trim().toUpperCase(), background_color:color, icon_name:tab==='icon'?icon:null,
       image_path:finalImagePath, speak_on_select:speakOn });
-    console.log('[DEBUG SectionModal.save] ok:', ok, '| finalImagePath:', finalImagePath);
     if (ok) await cleanupOrphans(finalImagePath);
     setSaving(false);
   }
