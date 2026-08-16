@@ -220,9 +220,10 @@ const STRINGS = {
     editCard: '✏️ Editar card', newCardModal: '✏️ Novo card',
     editSectionModal: '📂 Editar seção', newSectionModal: '📂 Nova seção',
     sectionName: 'Nome da seção', speakOnSelect: 'Vocalizar o nome da seção ao selecionar',
-    deleteSection: 'Excluir seção', deleteCard: 'Excluir card',
+    deleteSection: 'Excluir seção', deleteCard: 'Excluir card', deleteSubsection: 'Excluir subseção',
     confirmDeleteSection: (name) => `Tem certeza que deseja excluir "${name}"? Todos os cards serão excluídos permanentemente.`,
     confirmDeleteCard: (name) => `Tem certeza que deseja excluir o card "${name}"?`,
+    confirmDeleteSubsection: (name, count) => `O card "${name}" é uma subseção com ${count} ${count===1?'item':'itens'} dentro. Excluir esta subseção vai excluir PERMANENTEMENTE todos os itens dentro dela também. Esta ação não pode ser desfeita.`,
     delete: 'Excluir',
     cardCreated: 'Card criado!', cardUpdated: 'Card atualizado!', cardDeleted: 'Card excluído',
     sectionCreated: 'Seção criada!', sectionUpdated: 'Seção atualizada!', sectionDeleted: 'Seção excluída',
@@ -283,9 +284,10 @@ const STRINGS = {
     editCard: '✏️ Edit card', newCardModal: '✏️ New card',
     editSectionModal: '📂 Edit section', newSectionModal: '📂 New section',
     sectionName: 'Section name', speakOnSelect: 'Speak section name on select',
-    deleteSection: 'Delete section', deleteCard: 'Delete card',
+    deleteSection: 'Delete section', deleteCard: 'Delete card', deleteSubsection: 'Delete subsection',
     confirmDeleteSection: (name) => `Are you sure you want to delete "${name}"? All cards will be permanently deleted.`,
     confirmDeleteCard: (name) => `Are you sure you want to delete the card "${name}"?`,
+    confirmDeleteSubsection: (name, count) => `The card "${name}" is a subsection with ${count} ${count===1?'item':'items'} inside. Deleting this subsection will also permanently delete everything inside it. This action cannot be undone.`,
     delete: 'Delete',
     cardCreated: 'Card created!', cardUpdated: 'Card updated!', cardDeleted: 'Card deleted',
     sectionCreated: 'Section created!', sectionUpdated: 'Section updated!', sectionDeleted: 'Section deleted',
@@ -346,9 +348,10 @@ const STRINGS = {
     editCard: '✏️ Editar tarjeta', newCardModal: '✏️ Nueva tarjeta',
     editSectionModal: '📂 Editar sección', newSectionModal: '📂 Nueva sección',
     sectionName: 'Nombre de la sección', speakOnSelect: 'Vocalizar el nombre de la sección al seleccionar',
-    deleteSection: 'Eliminar sección', deleteCard: 'Eliminar tarjeta',
+    deleteSection: 'Eliminar sección', deleteCard: 'Eliminar tarjeta', deleteSubsection: 'Eliminar subsección',
     confirmDeleteSection: (name) => `¿Seguro que deseas eliminar "${name}"? Todas las tarjetas serán eliminadas permanentemente.`,
     confirmDeleteCard: (name) => `¿Seguro que deseas eliminar la tarjeta "${name}"?`,
+    confirmDeleteSubsection: (name, count) => `La tarjeta "${name}" es una subsección con ${count} ${count===1?'elemento':'elementos'} dentro. Eliminar esta subsección también eliminará permanentemente todo lo que hay dentro. Esta acción no se puede deshacer.`,
     delete: 'Eliminar',
     cardCreated: '¡Tarjeta creada!', cardUpdated: '¡Tarjeta actualizada!', cardDeleted: 'Tarjeta eliminada',
     sectionCreated: '¡Sección creada!', sectionUpdated: '¡Sección actualizada!', sectionDeleted: 'Sección eliminada',
@@ -409,9 +412,10 @@ const STRINGS = {
     editCard: '✏️ Modifier la carte', newCardModal: '✏️ Nouvelle carte',
     editSectionModal: '📂 Modifier la section', newSectionModal: '📂 Nouvelle section',
     sectionName: 'Nom de la section', speakOnSelect: 'Vocaliser le nom de la section à la sélection',
-    deleteSection: 'Supprimer la section', deleteCard: 'Supprimer la carte',
+    deleteSection: 'Supprimer la section', deleteCard: 'Supprimer la carte', deleteSubsection: 'Supprimer la sous-section',
     confirmDeleteSection: (name) => `Voulez-vous vraiment supprimer "${name}" ? Toutes les cartes seront supprimées définitivement.`,
     confirmDeleteCard: (name) => `Voulez-vous vraiment supprimer la carte "${name}" ?`,
+    confirmDeleteSubsection: (name, count) => `La carte "${name}" est une sous-section contenant ${count} ${count===1?'élément':'éléments'}. Supprimer cette sous-section supprimera aussi définitivement tout son contenu. Cette action ne peut pas être annulée.`,
     delete: 'Supprimer',
     cardCreated: 'Carte créée !', cardUpdated: 'Carte mise à jour !', cardDeleted: 'Carte supprimée',
     sectionCreated: 'Section créée !', sectionUpdated: 'Section mise à jour !', sectionDeleted: 'Section supprimée',
@@ -471,6 +475,26 @@ const SUPABASE_URL = 'https://bhlibvcmmarljcbbpzbc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJobGlidmNtbWFybGpjYmJwemJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTA3MDQsImV4cCI6MjA5ODE4NjcwNH0.TJY1jR1QBzhb1_dbZafoZxEfkltSjIq4jchXFZqChYw';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const BUCKET = 'card-images';
+
+// Extrai o caminho do arquivo (dentro do bucket) a partir da URL pública do
+// Supabase Storage, e apaga o arquivo. Usado sempre que uma foto deixa de
+// ser referenciada (trocada, removida, ou o card/seção foi excluído) — sem
+// isso, o arquivo fica órfão no Storage pra sempre, só o registro no banco
+// é apagado.
+function storagePathFromUrl(url) {
+  if (!url) return null;
+  const marker = `/storage/v1/object/public/${BUCKET}/`;
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  return url.slice(idx + marker.length);
+}
+
+async function deleteStorageFile(url) {
+  const path = storagePathFromUrl(url);
+  if (!path) return;
+  try { await sb.storage.from(BUCKET).remove([path]); }
+  catch (e) { /* não bloqueia a UI — só deixa uma limpeza manual pra depois */ }
+}
 
 const COLORS = [
   { label:'Azul',         value:4284119706, hex:'#5A7A9A' },
@@ -846,21 +870,51 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
   const [isSubsection, setIsSubsection] = useState(card?.type==='subsection'||false);
   const [saving, setSaving] = useState(false);
 
+  // Foto que o card já tinha ao abrir o modal, e toda foto nova enviada
+  // durante esta sessão de edição (mesmo que trocada de novo ou descartada
+  // antes de salvar) — usados em cleanupOrphans() pra decidir o que apagar
+  // do Storage no Salvar/Cancelar, sem depender de apagar na hora errada.
+  const initialImagePath = useRef(card?.image_path || null);
+  const uploadedThisSession = useRef([]);
+
+  function handleImageChange(newUrl) {
+    if (newUrl) uploadedThisSession.current.push(newUrl);
+    setImgUrl(newUrl);
+  }
+
+  async function cleanupOrphans(finalImagePath) {
+    const toDelete = new Set();
+    if (initialImagePath.current && initialImagePath.current !== finalImagePath) {
+      toDelete.add(initialImagePath.current);
+    }
+    uploadedThisSession.current.forEach(u => { if (u !== finalImagePath) toDelete.add(u); });
+    for (const url of toDelete) await deleteStorageFile(url);
+  }
+
   async function save() {
     if (!name.trim()) return;
     setSaving(true);
-    await onSave({ name:name.trim().toUpperCase(), vocalization:voc.trim()||null, speak_immediately:speakImm,
-      background_color:color, icon_name:tab==='icon'?icon:null, image_path:tab==='image'?(imgUrl||null):null,
+    const finalImagePath = tab==='image' ? (imgUrl||null) : null;
+    const ok = await onSave({ name:name.trim().toUpperCase(), vocalization:voc.trim()||null, speak_immediately:speakImm,
+      background_color:color, icon_name:tab==='icon'?icon:null, image_path:finalImagePath,
       type: isSubsection ? 'subsection' : 'normal' });
+    if (ok) await cleanupOrphans(finalImagePath);
     setSaving(false);
   }
 
+  function handleClose() {
+    // Cancelou (ou fechou sem salvar) — nada mudou de verdade, então a foto
+    // original fica intacta; só limpamos o que foi enviado nesta sessão.
+    cleanupOrphans(initialImagePath.current);
+    onClose();
+  }
+
   return (
-    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&handleClose()}>
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">{card?t.editCard:t.newCardModal}</div>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={handleClose}>×</button>
         </div>
         <div className="modal-body">
           {/* Preview */}
@@ -893,7 +947,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
               <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
               <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={handleImageChange} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
           {/* Toggle subseção - só aparece quando não estiver dentro de uma subseção */}
           {!insideSubsection && (
@@ -907,7 +961,7 @@ function CardModal({ card, sectionColor, userId, onSave, onClose, requestCrop, i
           )}
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button>
+          <button className="btn btn-ghost" onClick={handleClose}>{t.cancel}</button>
           <button className="btn btn-success" onClick={save} disabled={!name.trim()||saving}>
             {saving?<span className="spinner"/>:t.save}
           </button>
@@ -926,20 +980,44 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t, lang }
   const [imgUrl, setImgUrl] = useState(section?.image_path||'');
   const [saving, setSaving] = useState(false);
 
+  const initialImagePath = useRef(section?.image_path || null);
+  const uploadedThisSession = useRef([]);
+
+  function handleImageChange(newUrl) {
+    if (newUrl) uploadedThisSession.current.push(newUrl);
+    setImgUrl(newUrl);
+  }
+
+  async function cleanupOrphans(finalImagePath) {
+    const toDelete = new Set();
+    if (initialImagePath.current && initialImagePath.current !== finalImagePath) {
+      toDelete.add(initialImagePath.current);
+    }
+    uploadedThisSession.current.forEach(u => { if (u !== finalImagePath) toDelete.add(u); });
+    for (const url of toDelete) await deleteStorageFile(url);
+  }
+
   async function save() {
     if (!name.trim()) return;
     setSaving(true);
-    await onSave({ name:name.trim().toUpperCase(), background_color:color, icon_name:tab==='icon'?icon:null,
-      image_path:tab==='image'?(imgUrl||null):null, speak_on_select:speakOn });
+    const finalImagePath = tab==='image' ? (imgUrl||null) : null;
+    const ok = await onSave({ name:name.trim().toUpperCase(), background_color:color, icon_name:tab==='icon'?icon:null,
+      image_path:finalImagePath, speak_on_select:speakOn });
+    if (ok) await cleanupOrphans(finalImagePath);
     setSaving(false);
   }
 
+  function handleClose() {
+    cleanupOrphans(initialImagePath.current);
+    onClose();
+  }
+
   return (
-    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+    <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&handleClose()}>
       <div className="modal">
         <div className="modal-header">
           <div className="modal-title">{section?t.editSectionModal:t.newSectionModal}</div>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={handleClose}>×</button>
         </div>
         <div className="modal-body">
           <div className="form-row">
@@ -961,11 +1039,11 @@ function SectionModal({ section, onSave, onClose, userId, requestCrop, t, lang }
               <button className={`tab${tab==='icon'?' active':''}`} onClick={()=>setTab('icon')}>{t.icon}</button>
               <button className={`tab${tab==='image'?' active':''}`} onClick={()=>setTab('image')}>{t.photo}</button>
             </div>
-            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={setImgUrl} userId={userId} requestCrop={requestCrop} t={t} />}
+            {tab==='icon'?<IconPicker value={icon} onChange={setIcon} t={t} lang={lang} />:<ImageUpload value={imgUrl} onChange={handleImageChange} userId={userId} requestCrop={requestCrop} t={t} />}
           </div>
         </div>
         <div className="modal-footer">
-          <button className="btn btn-ghost" onClick={onClose}>{t.cancel}</button>
+          <button className="btn btn-ghost" onClick={handleClose}>{t.cancel}</button>
           <button className="btn btn-success" onClick={save} disabled={!name.trim()||saving}>
             {saving?<span className="spinner"/>:t.save}
           </button>
@@ -1372,21 +1450,35 @@ function App() {
         .eq('user_id', session.user.id).order('position', {ascending:false}).limit(1);
       const nextPos = existing && existing.length > 0 ? existing[0].position + 1 : 0;
       const {data:newS,error} = await sb.from('sections').insert({...data,user_id:session.user.id,position:nextPos}).select().single();
-      if(error){showToast(t.errorCreate,'error');return;}
+      if(error){showToast(t.errorCreate,'error');return false;}
       setSections(p=>[...p,newS]); setSelectedSection(newS); setCards([]); showToast(t.sectionCreated);
     } else {
       const {data:upd,error} = await sb.from('sections').update(data).eq('id',sectionModal.id).select().single();
-      if(error){showToast(t.errorUpdate,'error');return;}
+      if(error){showToast(t.errorUpdate,'error');return false;}
       setSections(p=>p.map(s=>s.id===upd.id?upd:s));
       if(selectedSection?.id===upd.id) setSelectedSection(upd);
       showToast(t.sectionUpdated);
     }
     setSectionModal(null);
+    return true;
   }
 
   async function deleteSection(s) {
-    await sb.from('cards').delete().eq('section_id',s.id);
-    await sb.from('sections').delete().eq('id',s.id);
+    // Coleta a foto da própria seção + de todos os cards dela ANTES de
+    // apagar (a lista inteira — inclui filhos de subseção, que têm o mesmo
+    // section_id) — nenhuma dessas fotos era limpa do Storage antes.
+    const {data: sectionCards} = await sb.from('cards').select('image_path').eq('section_id', s.id);
+
+    const {error: cardsErr} = await sb.from('cards').delete().eq('section_id',s.id);
+    if(cardsErr){showToast(cardsErr.message,'error');setDeleteConfirm(null);return;}
+    const {error: secErr} = await sb.from('sections').delete().eq('id',s.id);
+    if(secErr){showToast(secErr.message,'error');setDeleteConfirm(null);return;}
+
+    const imagePaths = [];
+    if (s.image_path) imagePaths.push(s.image_path);
+    (sectionCards||[]).forEach(c => { if (c.image_path) imagePaths.push(c.image_path); });
+    for (const path of imagePaths) await deleteStorageFile(path);
+
     const ns = sections.filter(x=>x.id!==s.id);
     setSections(ns);
     if(selectedSection?.id===s.id){ setSelectedSection(ns[0]||null); if(ns[0]) await loadCards(ns[0].id); else setCards([]); }
@@ -1408,19 +1500,38 @@ function App() {
         parent_card_id: activeSubsection ? activeSubsection.id : null,
       };
       const {data:newC,error} = await sb.from('cards').insert(insertData).select().single();
-      if(error){showToast(t.errorCreate,'error');return;}
+      if(error){showToast(t.errorCreate,'error');return false;}
       setCards(p=>[...p,newC]); showToast(t.cardCreated);
     } else {
       const {data:upd,error} = await sb.from('cards').update(data).eq('id',cardModal.id).select().single();
-      if(error){showToast(t.errorUpdate,'error');return;}
+      if(error){showToast(t.errorUpdate,'error');return false;}
       setCards(p=>p.map(c=>c.id===upd.id?upd:c)); showToast(t.cardUpdated);
     }
     setCardModal(null);
+    return true;
   }
 
   async function deleteCard(card) {
-    await sb.from('cards').delete().eq('id',card.id);
-    setCards(p=>p.filter(c=>c.id!==card.id));
+    // Se for subseção, os filhos (parent_card_id apontando pra ela) são
+    // apagados junto — do contrário ficavam órfãos no banco (inacessíveis
+    // pela UI, já que a subseção que abria eles não existe mais).
+    let childImages = [];
+    if (card.type === 'subsection') {
+      const children = cards.filter(c => c.parent_card_id === card.id);
+      childImages = children.map(c => c.image_path).filter(Boolean);
+      if (children.length) {
+        const {error: childErr} = await sb.from('cards').delete().in('id', children.map(c=>c.id));
+        if(childErr){showToast(childErr.message,'error');setDeleteConfirm(null);return;}
+      }
+    }
+    const {error} = await sb.from('cards').delete().eq('id',card.id);
+    if(error){showToast(error.message,'error');setDeleteConfirm(null);return;}
+
+    const imagePaths = [card.image_path, ...childImages].filter(Boolean);
+    for (const path of imagePaths) await deleteStorageFile(path);
+
+    const deletedIds = new Set([card.id, ...(card.type==='subsection' ? cards.filter(c=>c.parent_card_id===card.id).map(c=>c.id) : [])]);
+    setCards(p=>p.filter(c=>!deletedIds.has(c.id)));
     setDeleteConfirm(null); showToast(t.cardDeleted);
   }
 
@@ -1479,6 +1590,13 @@ function App() {
       </div>
     </div>
   );
+
+  // Se o item marcado pra exclusão é um card do tipo subseção, conta
+  // quantos cards filhos (parent_card_id apontando pra ele) existem, pra
+  // mostrar o aviso certo e apagar tudo em cascata na confirmação.
+  const deleteChildCount = (deleteConfirm?.type === 'card' && deleteConfirm.item.type === 'subsection')
+    ? cards.filter(c => c.parent_card_id === deleteConfirm.item.id).length
+    : 0;
 
   // ─── PANEL ────
   return (
@@ -1602,8 +1720,8 @@ function App() {
       {cardModal&&<CardModal card={cardModal==='new'?null:cardModal} sectionColor={selectedSection?.background_color} userId={session.user.id} onSave={saveCard} onClose={()=>setCardModal(null)} requestCrop={requestCrop} insideSubsection={!!activeSubsection} t={t} lang={lang} />}
       {sectionModal&&<SectionModal section={sectionModal==='new'?null:sectionModal} onSave={saveSection} onClose={()=>setSectionModal(null)} userId={session.user.id} requestCrop={requestCrop} t={t} lang={lang} />}
       {deleteConfirm&&<DeleteConfirm
-        title={deleteConfirm.type==='section'?t.deleteSection:t.deleteCard}
-        msg={deleteConfirm.type==='section'?t.confirmDeleteSection(deleteConfirm.item.name):t.confirmDeleteCard(deleteConfirm.item.name)}
+        title={deleteConfirm.type==='section'?t.deleteSection:(deleteChildCount>0?t.deleteSubsection:t.deleteCard)}
+        msg={deleteConfirm.type==='section'?t.confirmDeleteSection(deleteConfirm.item.name):(deleteChildCount>0?t.confirmDeleteSubsection(deleteConfirm.item.name,deleteChildCount):t.confirmDeleteCard(deleteConfirm.item.name))}
         onConfirm={()=>deleteConfirm.type==='section'?deleteSection(deleteConfirm.item):deleteCard(deleteConfirm.item)}
         onClose={()=>setDeleteConfirm(null)} t={t} />}
       {toast&&<Toast key={toast.key} msg={toast.msg} type={toast.type} onDone={()=>setToast(null)} />}
